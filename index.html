@@ -7,6 +7,10 @@
 		// WebXR requires https: to work so ensure redirected if needed.
 		if (location.hostname !== 'localhost' && window.location.protocol === 'http:') window.location.protocol = 'https:';
 	</script>
+  	<script src="./picker.js"></script>
+	<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+	<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+
 	<meta name="description" content="Basic Example — AFrame HTML" />
 	<style>
 		body {
@@ -47,7 +51,6 @@
 		<a-assets>
 			<a-mixin id="blink"
 				blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
-			<img src="./1.jpg" id="img1" crossorigin="">
 		</a-assets>
 
 		<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat"></a-sphere>
@@ -131,9 +134,9 @@
 			</fieldset>
 			<fieldset style="border-width: 0 1px; border-style: solid;border-radius: 0.5em;">
 				<legend>Material:</legend>
-				<input onclick="handleCheckbox(this)" id="material-wireframe" type="checkbox" name="wireframe"><label
-					for="material-wireframe"> Wireframe</label>
-				<input onclick="handleCheckbox(this)" id="material-shiny" type="checkbox" name="shiny" checked><label
+				<button style="" id='authorize_button' onclick="handleAuthClick()"  name="wireframe"><label for="authorize_button"> authorize</label>></button>
+				
+					<input onclick="handleCheckbox(this)" id="material-shiny" type="checkbox" name="shiny" checked><label
 					for="material-shiny"> Shiny</label>
 			</fieldset>
 			<fieldset style="border-radius: 1em;">
