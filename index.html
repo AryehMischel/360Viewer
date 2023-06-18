@@ -189,61 +189,86 @@
 	<script>
 		//this script processes the images as they come in from gdrive
 		let i = 0;
-  let arr = [];
+		let arr = [];
 
-  const scene = document.querySelector("a-scene")
-  const assets = document.querySelector("a-assets")
+		const scene = document.querySelector("a-scene")
+		const assets = document.querySelector("a-assets")
 
-  function crop(src) {
+		function crop(src) {
 
-    let img = document.createElement("img")
-    img.setAttribute("src", src)
-    img.onload = function () {
+			let img = document.createElement("img")
+			img.setAttribute("src", src)
+			img.onload = function () {
 
-      var tempCanvas = document.createElement("canvas")
-      var tCtx = tempCanvas.getContext("2d");
-      tempCanvas.width = img.width;
-      tempCanvas.height = img.height / 2;
-
-
-      tCtx.drawImage(img, 0, 0);
-      var croppedLeft = tempCanvas.toDataURL("image/png");
-      tCtx.drawImage(img, 0, -img.height / 2);
-      var croppedRight = tempCanvas.toDataURL("image/png");
+				var tempCanvas = document.createElement("canvas")
+				var tCtx = tempCanvas.getContext("2d");
+				tempCanvas.width = img.width;
+				tempCanvas.height = img.height / 2;
 
 
-      let parent = document.createElement("a-entity");
-      parent.setAttribute('visible', false)
-
-      let leftSky = document.createElement("a-sky")
-      let rightSky = document.createElement("a-sky")
-
-      leftSky.setAttribute("src", croppedLeft)
-      leftSky.addEventListener("loaded", () => {
-        leftSky.getObject3D("mesh").layers.set(2) // layer 1 is left eye, layer 2 is right 
-
-      })
-
-      rightSky.setAttribute("src", croppedRight)
-      rightSky.addEventListener("loaded", () => {
-        rightSky.getObject3D("mesh").layers.set(1) // layer 1 is left eye, layer 2 is right 
-
-      })
+				tCtx.drawImage(img, 0, 0);
+				var croppedLeft = tempCanvas.toDataURL("image/png");
+				tCtx.drawImage(img, 0, -img.height / 2);
+				var croppedRight = tempCanvas.toDataURL("image/png");
 
 
+				let parent = document.createElement("a-entity");
+				parent.setAttribute('visible', false)
 
-      parent.append(rightSky)
-      parent.append(leftSky)
-      scene.append(parent)
-      arr.push(parent)
+				let leftSky = document.createElement("a-sky")
+				let rightSky = document.createElement("a-sky")
 
-    };
+				leftSky.setAttribute("src", croppedLeft)
+				leftSky.addEventListener("loaded", () => {
+					leftSky.getObject3D("mesh").layers.set(2) // layer 1 is left eye, layer 2 is right 
+
+				})
+
+				rightSky.setAttribute("src", croppedRight)
+				rightSky.addEventListener("loaded", () => {
+					rightSky.getObject3D("mesh").layers.set(1) // layer 1 is left eye, layer 2 is right 
+
+				})
 
 
-  }
+
+				parent.append(rightSky)
+				parent.append(leftSky)
+				scene.append(parent)
+				arr.push(parent)
+
+			};
+
+
+		}
 
 
 	</script>
+
+
+<script id="skyPicker">
+
+	function select(index) {
+	  arr[i].setAttribute("visible", false)
+	  arr[index].setAttribute("visible", true)
+	  i = index;
+  
+	}
+  
+
+	// function setscene() {
+	//   numOfElements = arr.length
+  
+	// }
+  
+	// async function go() {
+	//   for (let child of assets.children) {
+  
+	//   }
+  
+	// }
+  
+  </script>
 </body>
 
 </html>
