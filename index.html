@@ -46,13 +46,12 @@
 	<a-scene webxr="overlayElement:#dom-overlay;" reflection="directionalLight:#dirlight;"
 		renderer="alpha:true;physicallyCorrectLights:true;colorManagement:true;exposure:1;toneMapping:ACESFilmic;"
 		gltf-model="dracoDecoderPath: https://cdn.jsdelivr.net/npm/three@0.129.0/examples/js/libs/draco/gltf/;"
-		shadow="type: pcfsoft" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;">
-
+		shadow="type: pcfsoft; autoUpdate: true"  cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;">
 		<a-assets>
 			<a-mixin id="blink" blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
 			<img id="burgerImg" src="./assets/imgs/burger.jpg">
 		</a-assets>
-		<!-- <a-sky color="pink"></a-sky> -->
+		<a-sky color="lightblue"></a-sky>
 
 		<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat"></a-sphere>
 
@@ -101,13 +100,12 @@
 
 
 		<a-light id="dirlight" shadow-camera-automatic=".navmesh" intensity="0.7" light="castShadow:true;type:directional" position="40 80 0"></a-light>
-		<a-light type="hemisphere" ground-color="orange" color="blue" intensity="0.3"></a-light>
+		<a-light type="hemisphere" ground-color="orange" color="blue" intensity="0.5"></a-light>
 		<a-circle hide-on-enter-ar shadow="cast:false" class="navmesh" rotation="-90 0 0" radius="6" material="shader:phong;color:paleblue;"></a-circle>
 		<a-entity id="env" hide-on-enter-ar position="0 -0.2 0" environment="lighting:none;preset:yavapai;skyType:atmosphere;">
 			<!--  -->
 		</a-entity>
-		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.3;"
-			id="knot"></a-torus-knot>
+		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.3;" id="knot"></a-torus-knot>
 		<a-entity html="cursor:#cursor;html:#my-interface" shadow position="0.25 1.5 -0.5"></a-entity>
 	</a-scene>
 
@@ -243,6 +241,9 @@
 
 
 	<script id="skyPicker">
+
+
+		
 
 		function select(index) {
 			arr[i].setAttribute("visible", false)
