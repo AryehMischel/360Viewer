@@ -49,9 +49,10 @@
 		shadow="type: pcfsoft" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;">
 
 		<a-assets>
-			<a-mixin id="blink"
-				blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
+			<a-mixin id="blink" blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
+			<img id="burgerImg" src="./assets/imgs/burger.jpg">
 		</a-assets>
+		<!-- <a-sky color="pink"></a-sky> -->
 
 		<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat"></a-sphere>
 
@@ -99,12 +100,11 @@
 		</a-entity>
 
 
-		<a-light id="dirlight" shadow-camera-automatic=".navmesh" intensity="0.7"
-			light="castShadow:true;type:directional" position="40 80 0"></a-light>
+		<a-light id="dirlight" shadow-camera-automatic=".navmesh" intensity="0.7" light="castShadow:true;type:directional" position="40 80 0"></a-light>
 		<a-light type="hemisphere" ground-color="orange" color="blue" intensity="0.3"></a-light>
-		<a-circle hide-on-enter-ar shadow="cast:false" class="navmesh" rotation="-90 0 0" radius="6"
-			material="shader:phong;color:paleblue;"></a-circle>
-		<a-entity hide-on-enter-ar position="0 -0.2 0" environment="lighting:none;preset:yavapai;skyType:atmosphere;">
+		<a-circle hide-on-enter-ar shadow="cast:false" class="navmesh" rotation="-90 0 0" radius="6" material="shader:phong;color:paleblue;"></a-circle>
+		<a-entity id="env" hide-on-enter-ar position="0 -0.2 0" environment="lighting:none;preset:yavapai;skyType:atmosphere;">
+			<!--  -->
 		</a-entity>
 		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.3;"
 			id="knot"></a-torus-knot>
@@ -265,6 +265,8 @@
 // }
 
 	</script>
+
+
 </body>
 
 </html>
