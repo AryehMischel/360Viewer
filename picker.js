@@ -188,7 +188,7 @@ function addImage(src){
     let image = document.createElement("img")
     
     image.src = src
-    // crop(src);
+    crop(src);
     
     //document.querySelector("a-assets").append(image)
 }

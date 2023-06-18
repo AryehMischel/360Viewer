@@ -7,7 +7,7 @@
 		// WebXR requires https: to work so ensure redirected if needed.
 		if (location.hostname !== 'localhost' && window.location.protocol === 'http:') window.location.protocol = 'https:';
 	</script>
-  	<script src="./picker.js"></script>
+	<script src="./picker.js"></script>
 	<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
 	<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 
@@ -47,7 +47,6 @@
 		renderer="alpha:true;physicallyCorrectLights:true;colorManagement:true;exposure:1;toneMapping:ACESFilmic;"
 		gltf-model="dracoDecoderPath: https://cdn.jsdelivr.net/npm/three@0.129.0/examples/js/libs/draco/gltf/;"
 		shadow="type: pcfsoft" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;">
-
 		<a-assets>
 			<a-mixin id="blink"
 				blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
@@ -134,9 +133,10 @@
 			</fieldset>
 			<fieldset style="border-width: 0 1px; border-style: solid;border-radius: 0.5em;">
 				<legend>Material:</legend>
-				<button style="" id='authorize_button' onclick="handleAuthClick()"  name="wireframe"><label for="authorize_button"> authorize</label>></button>
-				
-					<input onclick="handleCheckbox(this)" id="material-shiny" type="checkbox" name="shiny" checked><label
+				<button style="" id='authorize_button' onclick="handleAuthClick()" name="wireframe"><label
+						for="authorize_button"> authorize</label>></button>
+
+				<input onclick="handleCheckbox(this)" id="material-shiny" type="checkbox" name="shiny" checked><label
 					for="material-shiny"> Shiny</label>
 			</fieldset>
 			<fieldset style="border-radius: 1em;">
@@ -153,12 +153,12 @@
 	<script>
 		let meshParent = document.getElementById("meshParent")
 		let mesh = document.getElementById("htmlMesh");
-		
+
 		function addMesh() {
 
 
-				mesh.setAttribute("html", "cursor:#cursor;html:#my-interface")
-				mesh.setAttribute("visible", true)
+			mesh.setAttribute("html", "cursor:#cursor;html:#my-interface")
+			mesh.setAttribute("visible", true)
 
 
 		}
@@ -184,6 +184,65 @@
 			if (name === 'wireframe') knot.setAttribute('material', 'wireframe', detail.checked);
 			if (name === 'shiny') knot.setAttribute('material', 'reflectivity', detail.checked ? '0.3' : 0);
 		}
+	</script>
+
+	<script>
+		//this script processes the images as they come in from gdrive
+		let i = 0;
+  let arr = [];
+
+  const scene = document.querySelector("a-scene")
+  const assets = document.querySelector("a-assets")
+
+  function crop(src) {
+
+    let img = document.createElement("img")
+    img.setAttribute("src", src)
+    img.onload = function () {
+
+      var tempCanvas = document.createElement("canvas")
+      var tCtx = tempCanvas.getContext("2d");
+      tempCanvas.width = img.width;
+      tempCanvas.height = img.height / 2;
+
+
+      tCtx.drawImage(img, 0, 0);
+      var croppedLeft = tempCanvas.toDataURL("image/png");
+      tCtx.drawImage(img, 0, -img.height / 2);
+      var croppedRight = tempCanvas.toDataURL("image/png");
+
+
+      let parent = document.createElement("a-entity");
+      parent.setAttribute('visible', false)
+
+      let leftSky = document.createElement("a-sky")
+      let rightSky = document.createElement("a-sky")
+
+      leftSky.setAttribute("src", croppedLeft)
+      leftSky.addEventListener("loaded", () => {
+        leftSky.getObject3D("mesh").layers.set(2) // layer 1 is left eye, layer 2 is right 
+
+      })
+
+      rightSky.setAttribute("src", croppedRight)
+      rightSky.addEventListener("loaded", () => {
+        rightSky.getObject3D("mesh").layers.set(1) // layer 1 is left eye, layer 2 is right 
+
+      })
+
+
+
+      parent.append(rightSky)
+      parent.append(leftSky)
+      scene.append(parent)
+      arr.push(parent)
+
+    };
+
+
+  }
+
+
 	</script>
 </body>
 
