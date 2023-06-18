@@ -55,66 +55,18 @@
 
 		<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat"></a-sphere>
 
-		<a-entity id="cameraRig" spawn-in-circle="radius:3">
-			<!-- camera -->
-			<!-- <a-entity class="avatar-head" camera="near:0.01;" look-controls="pointerLockEnabled: false"
-				wasd-controls="acceleration:20;" simple-navmesh-constraint="navmesh:.navmesh;fall:0.5;height:1.65;"
-				position="0 1.65 0"></a-entity> -->
 
-				<a-entity class="avatar-head" wasd-controls="acceleration:20;" position="0 1.6 0">
-					<a-entity camera look-controls wasd-controls stereocam="eye:left;"></a-entity>
-				  </a-entity>
-
-			<!-- Hand tracking -->
-			<a-entity handy-controls="materialOverride:both;" material="color:gold;metalness:1;roughness:0;">
-
-				<!-- These also do teleportaion for Blink controls in VR -->
-				<!-- These are present for hand tracking but hands don't have joysticks so do nothing -->
-				<a-entity data-right="ray" mixin="blink" cursor
-					raycaster="showLine: true; far: 100; lineColor: red; objects: [html]; interval:100;"></a-entity>
-				<a-entity data-left="ray" mixin="blink" cursor
-					raycaster="showLine: true; far: 100; lineColor: red; objects: [html]; interval:100;"></a-entity>
-
-				<!-- Use the finger tips for teleporting when the user points in VR with hand tracking -->
-				<a-entity data-right="index-finger-tip" mixin="blink"
-					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;">
-				</a-entity>
-				<a-entity data-left="index-finger-tip" mixin="blink"
-					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;">
-				</a-entity>
-
-				<!-- These get drawn towards grabable objects, moving the whole hand and the attached elements-->
-				<a-entity id="left-magnet" position="0 0.6 0" class="avatar-hand-left" data-left="grip"
-					data-magnet="magnet-left"
-					grab-magnet-target="startEvents:squeezestart,pose_fist;stopEvents:pose_flat_fuseShort,squeezeend;noMagnetEl:#left-no-magnet;">
-				</a-entity>
-				<a-entity id="right-magnet" position="0 0.6 0" class="avatar-hand-right" data-right="grip"
-					data-magnet="magnet-right"
-					grab-magnet-target="startEvents:squeezestart,pose_fist;stopEvents:pose_flat_fuseShort,squeezeend;noMagnetEl:#right-no-magnet;">
-				</a-entity>
-
-				<!-- markers to let us know the real location of the hands, you probably want to make them visible="false" or just make them empty <a-entities> -->
-				<a-entity id="left-no-magnet" data-left="grip" data-no-magnet radius="0.01">
-					<a-entity html="cursor:#cursor;html:#my-interface" position="-0.142 -0.0166 -0.02928"
-						rotation="-80 90 0" scale="0.5 0.5 0.5"></a-entity>
-				</a-entity>
-				<a-entity id="right-no-magnet" data-right="grip" data-no-magnet radius="0.01"></a-entity>
-			</a-entity>
-		</a-entity>
+		<a-entity class="avatar-head" wasd-controls="acceleration:20;" position="0 1.6 0">
+			<a-entity camera look-controls wasd-controls stereocam="eye:left;"></a-entity>
+		  </a-entity>
 
 
-		<a-light id="dirlight" shadow-camera-automatic=".navmesh" intensity="0.7"
-			light="castShadow:true;type:directional" position="40 80 0"></a-light>
-		<a-light type="hemisphere" ground-color="orange" color="blue" intensity="0.3"></a-light>
-		<a-circle hide-on-enter-ar shadow="cast:false" class="navmesh" rotation="-90 0 0" radius="6"
-			material="shader:phong;color:paleblue;"></a-circle>
-		<a-entity hide-on-enter-ar position="0 -0.2 0" >
-		</a-entity>
-		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.3;"
-			id="knot"></a-torus-knot>
-		<a-enityt id="meshParent"></a-enityt>
+
+
+
 
 		<a-entity id="htmlMesh" shadow position="0.25 1.5 -0.5"></a-entity>
+		<a-sky color="lightblue"></a-sky>
 	</a-scene>
 
 	<div id="dom-overlay">
