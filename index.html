@@ -50,7 +50,9 @@
 			 shadow="type: pcfsoft; autoUpdate: true"  
 			 cursor="rayOrigin: mouse"
 			  raycaster="objects: [html]; interval:100;"
-			  fog="false">
+			  fog="false"
+			  onload="removeSky()"
+			  >
 		<a-assets>
 			<a-mixin id="blink" blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
 			<img id="burgerImg" src="./assets/imgs/burger.jpg">
@@ -246,9 +248,14 @@
 
 	<script id="skyPicker" defer>
 
-		let sky = document.querySelector("a-sky")
-		sky.parentNode.removeChild(sky)
-		console.log("removed")
+
+		function removeSky(){
+			
+			
+				console.log("removed ski")
+				let sky = document.querySelector("a-sky")
+				sky.parentNode.removeChild(sky)
+		}
 
 		
 
