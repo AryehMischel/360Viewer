@@ -230,9 +230,10 @@
 			// index++
 			
 			for(let i = 0; i < arr.length; i++){
-					let button = document.createElement("button")
+					let button = document.createElement("img")
 				button.innerHTML = `selectImage${i}`
-				button.setAttribute("style", "background-color: green")
+				button.setAttribute("src", thumbnails[i])
+				// button.setAttribute("style", "background-color: green")
 				button.setAttribute("onclick", `select(${i})` )
 				button.setAttribute("style", "display: block;")
 				myBox.append(button)
@@ -245,6 +246,7 @@
 		//this script processes the images as they come in from gdrive
 		let i = 0;
 		let arr = [];
+		let thumbnails = [];
 
 		const scene = document.querySelector("a-scene")
 		const assets = document.querySelector("a-assets")
@@ -263,6 +265,7 @@
 
 				tCtx.drawImage(img, 0, 0);
 				var croppedLeft = tempCanvas.toDataURL("image/png");
+				thumbnails.append(croppedLeft)
 				tCtx.drawImage(img, 0, -img.height / 2);
 				var croppedRight = tempCanvas.toDataURL("image/png");
 
