@@ -180,6 +180,7 @@
 
 			<button onclick="handleAuthClick()" style="display: block;">Add photos via google drive</button>
 
+			<button onclick="spawnIcons()" style="display: block;">spawn icon widgets</button>
 			<button onclick="AFRAME.scenes[0].exitVR()" style="display: block;">Exit Immersive</button>
 
 			<!-- <div id="image-icons" style="sc"> -->
@@ -225,7 +226,7 @@
 			for(let i = 0; i < arr.length; i++){
 				let button = document.createElement("button")
 				button.innerHTML = "asfdsdsdfsd"
-				button.setAttribute("onclick", `select${i}` )
+				button.setAttribute("onclick", `select${i}()` )
 				button.setAttribute("style", "display: block;")
 				myBox.append(button)
 			}
