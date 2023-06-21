@@ -195,6 +195,7 @@
 	<script>
 		let meshParent = document.getElementById("meshParent")
 		let mesh = document.getElementById("htmlMesh");
+		var index = 0
 
 		function addMesh() {
 
@@ -220,16 +221,19 @@
 
 
 
-		function spawnIcons(){
+		function spawnIcon(){
 			let myBox = document.getElementById('myBox')
+			let button = document.createElement("button")
+			button.setAttribute("onclick", `select(${index})` )
+			myBox.append(button)
+			index++
 			
-			for(let i = 0; i < arr.length; i++){
-				let button = document.createElement("button")
-				button.innerHTML = "asfdsdsdfsd"
-				button.setAttribute("onclick", `select(${i})` )
-				button.setAttribute("style", "display: block;")
-				myBox.append(button)
-			}
+			// for(let i = 0; i < arr.length; i++){
+			// 	button.innerHTML = "asfdsdsdfsd"
+			// 	button.setAttribute("onclick", `select(${i})` )
+			// 	button.setAttribute("style", "display: block;")
+			// 	myBox.append(button)
+			// }
 		}
 	</script>
 
@@ -284,6 +288,8 @@
 				parent.append(leftSky)
 				scene.append(parent)
 				arr.push(parent)
+
+				//
 
 			};
 
