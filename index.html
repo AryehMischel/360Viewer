@@ -265,7 +265,7 @@
 
 				tCtx.drawImage(img, 0, 0);
 				var croppedLeft = tempCanvas.toDataURL("image/png");
-				thumbnails.append(croppedLeft)
+				thumbnails.push(croppedLeft)
 				tCtx.drawImage(img, 0, -img.height / 2);
 				var croppedRight = tempCanvas.toDataURL("image/png");
 
