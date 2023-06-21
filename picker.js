@@ -103,7 +103,6 @@ function handleSignoutClick() {
 function createPicker() {
 
     var docsView = new google.picker.DocsView()
-        .addView(google.picker.ViewId.DOCS)
         .setIncludeFolders(true)
         .setMimeTypes('application/vnd.google-apps.folder', `application/vnd.google-apps.document`)
         .setSelectFolderEnabled(true);
@@ -114,6 +113,7 @@ function createPicker() {
         .setAppId(APP_ID)
         .setOAuthToken(accessToken)
         .addView(docsView)
+        .addView(google.picker.ViewId.DOCS)
         .setCallback(pickerCallback)
         .build();
 
