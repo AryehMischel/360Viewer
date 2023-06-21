@@ -102,25 +102,23 @@ function handleSignoutClick() {
  */
 function createPicker() {
 
-    var docsView = new google.picker.DocsView()
+        var docsView = new google.picker.DocsView()
         // .addView(google.picker.ViewId.DOCS)
         .setIncludeFolders(true)
         .setSelectFolderEnabled(true);
         docsView.setMimeTypes("image/png,image/jpeg,image/jpg");
        
-       
+       var DisplayView = new google.picker.DocsView().setIncludeFolders(true);
+
         var picker = new google.picker.PickerBuilder()
         .setDeveloperKey(API_KEY)
      
         .setAppId(APP_ID)
         .setOAuthToken(accessToken)
 
-        .addViewGroup(
-            new google.picker.ViewGroup(google.picker.ViewId.DOCS)
-                .addView(google.picker.ViewId.DOCUMENTS)
-                .addView(google.picker.ViewId.PRESENTATIONS))
+        
 
-        .addView(docsView)
+        .addView(DisplayView)
         .setCallback(pickerCallback)
         .build();
 
