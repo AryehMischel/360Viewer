@@ -105,7 +105,7 @@ function createPicker() {
     var docsView = new google.picker.DocsView()
         .addView(google.picker.ViewId.DOCS)
         .setIncludeFolders(true)
-        .setMimeTypes('application/vnd.google-apps.folder')
+        .setMimeTypes('application/vnd.google-apps.folder', `application/vnd.google-apps.document`)
         .setSelectFolderEnabled(true);
 
 
