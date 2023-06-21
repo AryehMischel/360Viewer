@@ -112,8 +112,8 @@ function createPicker() {
         .setDeveloperKey(API_KEY)
         .setAppId(APP_ID)
         .setOAuthToken(accessToken)
-        // .addView(docsView)
         .addView(google.picker.ViewId.DOCS)
+        .addView(docsView)
         .setCallback(pickerCallback)
         .build();
 
