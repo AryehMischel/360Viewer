@@ -104,16 +104,22 @@ function createPicker() {
 
     var docsView = new google.picker.DocsView()
         // .addView(google.picker.ViewId.DOCS)
-        // .setIncludeFolders(true)
-        .setMimeTypes('application/vnd.google-apps.folder,application/vnd.google-apps.document,application/vnd.google-apps.photo')
+        .setIncludeFolders(true)
         .setSelectFolderEnabled(true);
-        // docsView.setMode(docsView.GRID)
-    var picker = new google.picker.PickerBuilder()
+        docsView.setMimeTypes("image/png,image/jpeg,image/jpg");
+       
+       
+        var picker = new google.picker.PickerBuilder()
         .setDeveloperKey(API_KEY)
      
         .setAppId(APP_ID)
         .setOAuthToken(accessToken)
-        // .addView(google.picker.ViewId.DOCS)
+
+        .addViewGroup(
+            new google.picker.ViewGroup(google.picker.ViewId.DOCS)
+                .addView(google.picker.ViewId.DOCUMENTS)
+                .addView(google.picker.ViewId.PRESENTATIONS))
+
         .addView(docsView)
         .setCallback(pickerCallback)
         .build();
