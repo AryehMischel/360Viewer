@@ -104,16 +104,19 @@ function createPicker() {
 
     var docsView = new google.picker.DocsView()
         .setIncludeFolders(true)
+        .setInclude(true)
         .setMimeTypes('application/vnd.google-apps.folder')
         .setSelectFolderEnabled(true);
-
+        docsView.setMode(DocsViewMode)
 
     var picker = new google.picker.PickerBuilder()
+
         .setDeveloperKey(API_KEY)
         .setAppId(APP_ID)
         .setOAuthToken(accessToken)
         .addView(docsView)
         .setCallback(pickerCallback)
+
         .build();
 
     picker.setVisible(true);
