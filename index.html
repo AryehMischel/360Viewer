@@ -256,11 +256,19 @@
 
 			let img = document.createElement("img")
 			img.setAttribute("src", src)
-			assets.appendChild(img)
-			thumbnails.push(img)
-			img.onload = function () {
+			// assets.appendChild(img)
+			// thumbnails.push(img)
+			img.onload = function () 
+			{
+				
+
 				var tempCanvas = document.createElement("canvas")
 				var tCtx = tempCanvas.getContext("2d");
+				tempCanvas.width = img.width
+				tempCanvas.height = img.height
+				tCtx.drawImage(img, 0, 0);
+				var fullImg = tempCanvas.toDataURL("image/png");
+				thumbnails.push(fullImg)
 				tempCanvas.width = img.width;
 				tempCanvas.height = img.height / 2;
 
