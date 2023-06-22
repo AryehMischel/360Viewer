@@ -255,9 +255,9 @@
 		function crop(src) {
 
 			let img = document.createElement("img")
+			thumbnails.push(img)
 			img.setAttribute("src", src)
 			img.onload = function () {
-				thumbnails.push(img)
 				var tempCanvas = document.createElement("canvas")
 				var tCtx = tempCanvas.getContext("2d");
 				tempCanvas.width = img.width;
