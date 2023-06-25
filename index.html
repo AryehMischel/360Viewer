@@ -36,51 +36,53 @@
 		
 	</style> -->
 
-<style>
-	/* Force scrollbars onto browser window */
-	body {
-	margin-bottom: 200%;
-	}
-	
-	/* Box styles */
-	.myBox {
-	border: none;
-	padding: 5px;
-	font: 24px/36px sans-serif;
-	width: 200px;
-	height: 200px;
-	overflow: scroll;
-	}
-	
-	/* Scrollbar styles */
-	::-webkit-scrollbar {
-	width: 12px;
-	height: 12px;
-	}
-	
-	::-webkit-scrollbar-track {
-	background: gold;
-	border-radius: 10px;
-	}
-	
-	::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-	background: yellowgreen;  
-	}
-	
-	::-webkit-scrollbar-thumb:hover {
-	background: #88ba1c;  
-	}
-	  .pseudo-item {
-	  height: 300px;
-	  width: 369px;
-	  margin-right: 59px;
-	  flex-shrink: 0;
-	  background-color: gray;
-	}
-	  .pseudo-item:nth-of-type(2n) {
-	  background-color: lightgray;
-	}
+	<style>
+		/* Force scrollbars onto browser window */
+		body {
+			margin-bottom: 200%;
+		}
+
+		/* Box styles */
+		.myBox {
+			border: none;
+			padding: 5px;
+			font: 24px/36px sans-serif;
+			width: 200px;
+			height: 200px;
+			overflow: scroll;
+		}
+
+		/* Scrollbar styles */
+		::-webkit-scrollbar {
+			width: 12px;
+			height: 12px;
+		}
+
+		::-webkit-scrollbar-track {
+			background: gold;
+			border-radius: 10px;
+		}
+
+		::-webkit-scrollbar-thumb {
+			border-radius: 10px;
+			background: yellowgreen;
+		}
+
+		::-webkit-scrollbar-thumb:hover {
+			background: #88ba1c;
+		}
+
+		.pseudo-item {
+			height: 300px;
+			width: 369px;
+			margin-right: 59px;
+			flex-shrink: 0;
+			background-color: gray;
+		}
+
+		.pseudo-item:nth-of-type(2n) {
+			background-color: lightgray;
+		}
 	</style>
 	<script src="aframe-master.js"></script>
 	<script src="./picker.js"></script>
@@ -168,6 +170,13 @@
 		<a-entity html="cursor:#cursor;html:#my-interface" shadow position="0.25 1.5 -0.5"></a-entity>
 	</a-scene>
 
+
+
+
+
+
+
+
 	<div id="dom-overlay">
 		<section
 			style="display: inline-block; background: lavenderblush; color: #333333; border-radius: 1em; padding: 1em; margin:0; accent-color: hotpink;"
@@ -178,18 +187,50 @@
 
 			<button onclick="deleteSky()" style="display: block;">Delete Skies</button>
 
-			<button onclick="handleAuthClick()" style="display: block;">Add photos via google drive</button>
+			<button onclick="handleAuthClick()" style="display: block;">Add photos via google drive </button>	
+			<label for="language">image processing mode</label>
+			<select name="language" id="language">
+				<option value="javascript">MONOSCOPIC</option>
+				<option value="python">STEREOSCOPIC L/R</option>
+				<option value="python">STEREOSCOPIC R/L</option>
+				<option value="python">STEREOSCOPIC L|R</option>
+				<option value="python">STEREOSCOPIC R|L</option>
+				<option value="python">AUTO</option>
+
+
+
+			</select>
 
 			<button onclick="spawnIcons()" style="display: block;">spawn icon widgets</button>
+
+
+
 			<button onclick="AFRAME.scenes[0].exitVR()" style="display: block;">Exit Immersive</button>
 
+		
+
+		
 			<!-- <div id="image-icons" style="sc"> -->
 
 
 	</div>
 
 
+	<script>
+		// function openMenu() {
+		// 	var dropdowns = document.getElementsByClassName("dropdown-content");
+		// 	console
+		// 	// var i;
+		// 	for (i = 0; i < dropdowns.length; i++) {
+		// 	console.log(`showing${i}`)
 
+		// 		var openDropdown = dropdowns[i];
+		// 		if (openDropdown.classList.contains('show')) {
+		// 			openDropdown.classList.remove('show');
+		// 		}
+		// 	}
+		// }
+	</script>
 
 
 	<script>
@@ -221,20 +262,20 @@
 
 
 
-		function spawnIcons(){
+		function spawnIcons() {
 			let myBox = document.getElementById('myBox')
 			// let button = document.createElement("button")
 			// button.innerHTML = `image${index}`
 			// button.setAttribute("onclick", `select(${index})` )
 			// myBox.append(button)
 			// index++
-			
-			for(let i = 0; i < arr.length; i++){
-					let button = document.createElement("img")
+
+			for (let i = 0; i < arr.length; i++) {
+				let button = document.createElement("img")
 				button.innerHTML = `selectImage${i}`
 				button.setAttribute("src", thumbnails[i])
 				// button.setAttribute("style", "background-color: green")
-				button.setAttribute("onclick", `select(${i})` )
+				button.setAttribute("onclick", `select(${i})`)
 				button.setAttribute("style", "display: block; background-position: center center; height: 50; width: 200;")
 				//border-style: solid;border-width: 5px;
 				myBox.append(button)
@@ -258,9 +299,8 @@
 			img.setAttribute("src", src)
 			// assets.appendChild(img)
 			// thumbnails.push(img)
-			img.onload = function () 
-			{
-				
+			img.onload = function () {
+
 
 				var tempCanvas = document.createElement("canvas")
 				var tCtx = tempCanvas.getContext("2d");
