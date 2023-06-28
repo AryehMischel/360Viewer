@@ -11,30 +11,6 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 	<meta name="description" content="Basic Example — AFrame HTML" />
-	<!-- <style>
-		/* body {
-			font-size: 16px;
-		}
-
-		* {
-			box-sizing: border-box;
-		}
-
-		#dom-overlay {
-			font-family: Sans-Serif;
-			color: white;
-		}
-
-		#dom-overlay .overlay-footer {
-			background: #00000066;
-			padding: 1em;
-			margin: 0;
-			position: absolute;
-			inset: auto 0 0 0;
-		} */
-
-		
-	</style> -->
 
 	<style>
 		/* Force scrollbars onto browser window */
@@ -103,11 +79,9 @@
 		shadow="type: pcfsoft; autoUpdate: true" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;"
 		fog="false">
 		<a-assets>
-			<a-mixin id="blink"
-				blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
+			<a-mixin id="blink" blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
 			<img id="burgerImg" src="./assets/imgs/burger.jpg">
 		</a-assets>
-		<!-- <a-sky color="lightblue"></a-sky> -->
 
 		<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat"></a-sphere>
 
@@ -170,36 +144,27 @@
 		<a-entity html="cursor:#cursor;html:#my-interface" shadow position="0.25 1.5 -0.5"></a-entity>
 	</a-scene>
 
-
-
-
-
-
-
-
+	<!--HTML-->
 	<div id="dom-overlay">
 		<section
 			style="display: inline-block; background: lavenderblush; color: #333333; border-radius: 1em; padding: 1em; margin:0; accent-color: hotpink;"
 			id="my-interface">
 			<h2>Application Settings</h2>
-			<div class="myBox" id="myBox"></div>
+			<div class="myBox" id="Icons"></div>
 
 
 			<button onclick="deleteSky()" style="display: block;">Delete Skies</button>
 
-			<button onclick="handleAuthClick()" style="display: block;">Add photos via google drive </button>	
+			<button onclick="handleAuthClick()" style="display: block;">Add photos via google drive </button>
 			<label for="language">image processing mode</label>
-			<select name="language" id="language">
+			<select name="Image-Processing" id="Image-Processing-Options">
 				<option value="javascript">MONOSCOPIC</option>
 				<option value="python">STEREOSCOPIC L/R</option>
 				<option value="python">STEREOSCOPIC R/L</option>
 				<option value="python">STEREOSCOPIC L|R</option>
 				<option value="python">STEREOSCOPIC R|L</option>
 				<option value="python">AUTO</option>
-
-
-
-			</select>
+		  </select>
 
 			<button onclick="spawnIcons()" style="display: block;">spawn icon widgets</button>
 
@@ -207,36 +172,16 @@
 
 			<button onclick="AFRAME.scenes[0].exitVR()" style="display: block;">Exit Immersive</button>
 
-		
-
-		
-			<!-- <div id="image-icons" style="sc"> -->
-
 
 	</div>
 
 
-	<script>
-		// function openMenu() {
-		// 	var dropdowns = document.getElementsByClassName("dropdown-content");
-		// 	console
-		// 	// var i;
-		// 	for (i = 0; i < dropdowns.length; i++) {
-		// 	console.log(`showing${i}`)
-
-		// 		var openDropdown = dropdowns[i];
-		// 		if (openDropdown.classList.contains('show')) {
-		// 			openDropdown.classList.remove('show');
-		// 		}
-		// 	}
-		// }
-	</script>
-
 
 	<script>
-		let meshParent = document.getElementById("meshParent")
-		let mesh = document.getElementById("htmlMesh");
-		var index = 0
+		const meshParent = document.getElementById("meshParent")
+		const mesh = document.getElementById("htmlMesh");
+		
+		let index = 0
 
 		function addMesh() {
 
@@ -263,22 +208,15 @@
 
 
 		function spawnIcons() {
-			let myBox = document.getElementById('myBox')
-			// let button = document.createElement("button")
-			// button.innerHTML = `image${index}`
-			// button.setAttribute("onclick", `select(${index})` )
-			// myBox.append(button)
-			// index++
-
+			let ICons = document.getElementById('Icons')
+		
 			for (let i = 0; i < arr.length; i++) {
 				let button = document.createElement("img")
 				button.innerHTML = `selectImage${i}`
 				button.setAttribute("src", thumbnails[i])
-				// button.setAttribute("style", "background-color: green")
 				button.setAttribute("onclick", `select(${i})`)
 				button.setAttribute("style", "display: block; background-position: center center; height: 100; width: 200;")
-				//border-style: solid;border-width: 5px;
-				myBox.append(button)
+				Icons.append(button)
 			}
 		}
 	</script>
