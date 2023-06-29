@@ -8,39 +8,67 @@
 		if (location.hostname !== 'localhost' && window.location.protocol === 'http:') window.location.protocol = 'https:';
 	</script>
 
-
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 	<meta name="description" content="Basic Example — AFrame HTML" />
+
 	<style>
+		/* Force scrollbars onto browser window */
 		body {
-			font-size: 16px;
+			margin-bottom: 200%;
 		}
 
-		* {
-			box-sizing: border-box;
+		/* Box styles */
+		.myBox {
+			border: none;
+			padding: 5px;
+			font: 24px/36px sans-serif;
+			width: 200px;
+			height: 200px;
+			overflow: scroll;
 		}
 
-		#dom-overlay {
-			font-family: Sans-Serif;
-			color: white;
+		/* Scrollbar styles */
+		::-webkit-scrollbar {
+			width: 12px;
+			height: 12px;
 		}
 
-		#dom-overlay .overlay-footer {
-			background: #00000066;
-			padding: 1em;
-			margin: 0;
-			position: absolute;
-			inset: auto 0 0 0;
+		::-webkit-scrollbar-track {
+			background: gold;
+			border-radius: 10px;
+		}
+
+		::-webkit-scrollbar-thumb {
+			border-radius: 10px;
+			background: yellowgreen;
+		}
+
+		::-webkit-scrollbar-thumb:hover {
+			background: #88ba1c;
+		}
+
+		.pseudo-item {
+			height: 300px;
+			width: 369px;
+			margin-right: 59px;
+			flex-shrink: 0;
+			background-color: gray;
+		}
+
+		.pseudo-item:nth-of-type(2n) {
+			background-color: lightgray;
 		}
 	</style>
 	<script src="aframe-master.js"></script>
-
 	<script src="./picker.js"></script>
 	<script src="./stereo-components.js"></script>
 	<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
 	<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/handy-controls.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/magnet-helpers.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
 	<script src="build/aframe-html.js"></script>
 </head>
 
@@ -48,69 +76,112 @@
 	<a-scene webxr="overlayElement:#dom-overlay;" reflection="directionalLight:#dirlight;"
 		renderer="alpha:true;physicallyCorrectLights:true;colorManagement:true;exposure:1;toneMapping:ACESFilmic;"
 		gltf-model="dracoDecoderPath: https://cdn.jsdelivr.net/npm/three@0.129.0/examples/js/libs/draco/gltf/;"
-		shadow="type: pcfsoft" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;">
+		shadow="type: pcfsoft; autoUpdate: true" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;"
+		fog="false">
 		<a-assets>
-			<a-mixin id="blink"
-				blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
+			<a-mixin id="blink" blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
+			<img id="burgerImg" src="./assets/imgs/burger.jpg">
 		</a-assets>
 
 		<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat"></a-sphere>
 
+		<a-entity id="cameraRig" spawn-in-circle="radius:3">
+			<!-- camera -->
+			<a-entity class="avatar-head" camera="near:0.01;" look-controls="pointerLockEnabled: false"
+				wasd-controls="acceleration:20;" simple-navmesh-constraint="navmesh:.navmesh;fall:0.5;height:1.65;"
+				position="0 1.65 0" stereocam="eye:left;"></a-entity>
 
-		<a-entity class="avatar-head" wasd-controls="acceleration:20;" position="0 1.6 0">
-			<a-entity camera look-controls wasd-controls stereocam="eye:left;"></a-entity>
-		  </a-entity>
+			<!-- Hand tracking -->
+			<a-entity handy-controls="materialOverride:both;" material="color:gold;metalness:1;roughness:0;">
+
+				<!-- These also do teleportaion for Blink controls in VR -->
+				<!-- These are present for hand tracking but hands don't have joysticks so do nothing -->
+				<a-entity data-right="ray" mixin="blink" cursor
+					raycaster="showLine: true; far: 100; lineColor: red; objects: [html]; interval:100;"></a-entity>
+				<a-entity data-left="ray" mixin="blink" cursor
+					raycaster="showLine: true; far: 100; lineColor: red; objects: [html]; interval:100;"></a-entity>
+
+				<!-- Use the finger tips for teleporting when the user points in VR with hand tracking -->
+				<a-entity data-right="index-finger-tip" mixin="blink"
+					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;">
+				</a-entity>
+				<a-entity data-left="index-finger-tip" mixin="blink"
+					blink-controls="startEvents:pose_point;cancelEvents:pose_cancel_point;endEvents:pose_point_fuseLong;">
+				</a-entity>
+
+				<!-- These get drawn towards grabable objects, moving the whole hand and the attached elements-->
+				<a-entity id="left-magnet" position="0 0.6 0" class="avatar-hand-left" data-left="grip"
+					data-magnet="magnet-left"
+					grab-magnet-target="startEvents:squeezestart,pose_fist;stopEvents:pose_flat_fuseShort,squeezeend;noMagnetEl:#left-no-magnet;">
+				</a-entity>
+				<a-entity id="right-magnet" position="0 0.6 0" class="avatar-hand-right" data-right="grip"
+					data-magnet="magnet-right"
+					grab-magnet-target="startEvents:squeezestart,pose_fist;stopEvents:pose_flat_fuseShort,squeezeend;noMagnetEl:#right-no-magnet;">
+				</a-entity>
+
+				<!-- markers to let us know the real location of the hands, you probably want to make them visible="false" or just make them empty <a-entities> -->
+				<a-entity id="left-no-magnet" data-left="grip" data-no-magnet radius="0.01">
+					<a-entity html="cursor:#cursor;html:#my-interface" position="-0.142 -0.0166 -0.02928"
+						rotation="-80 90 0" scale="0.5 0.5 0.5"></a-entity>
+				</a-entity>
+				<a-entity id="right-no-magnet" data-right="grip" data-no-magnet radius="0.01"></a-entity>
+			</a-entity>
+		</a-entity>
 
 
+		<a-light id="dirlight" shadow-camera-automatic=".navmesh" intensity="0.7"
+			light="castShadow:true;type:directional" position="40 80 0"></a-light>
+		<a-light type="hemisphere" ground-color="orange" color="blue" intensity="0.5"></a-light>
+		<a-circle hide-on-enter-ar shadow="cast:false" class="navmesh" rotation="-90 0 0" radius="6"
+			material="shader:phong;color:paleblue;"></a-circle>
 
-
-
-
-		<a-entity id="htmlMesh" shadow position="0.25 1.5 -0.5"></a-entity>
-		<a-sky color="lightblue"></a-sky>
+		<a-entity id="env" hide-on-enter-ar position="0 -0.2 0"
+			environment="lighting:none;preset:yavapai;skyType:atmosphere;" onload="removeSky()">
+			<!--  -->
+		</a-entity>
+		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.3;"
+			id="knot"></a-torus-knot>
+		<a-entity html="cursor:#cursor;html:#my-interface" shadow position="0.25 1.5 -0.5"></a-entity>
 	</a-scene>
 
+	<!--HTML-->
 	<div id="dom-overlay">
-		<header style="pointer-events: none; user-select: none;">
-			<h1>
-				My Metaverse Site
-			</h1>
-		</header>
 		<section
-			style="display: inline-block; background-color: teal; color: #333333; border-radius: 1em; padding: 1em; margin:0; accent-color: hotpink; "
+			style="display: inline-block; background: lavenderblush; color: #333333; border-radius: 1em; padding: 1em; margin:0; accent-color: hotpink;"
 			id="my-interface">
-			<h2>Change Color</h2>
-			<img src="./assets/imgs/burger.jpg" height="100" width="100" onload="addMesh()">
+			<h2>Application Settings</h2>
+			<div class="myBox" id="Icons"></div>
 
-			<fieldset style="border:0 none;border-top: 1px solid grey;">
-				<legend>Colour</legend>
-				<input onclick="handleRadio(this)" type="radio" id="color-red" name="color" value="red" checked><label
-					for="color-red"> Red</label>
-				<input onclick="handleRadio(this)" type="radio" id="color-blue" name="color" value="blue"><label
-					for="color-blue"> Blue</label>
-			</fieldset>
-			<fieldset style="border-width: 0 1px; border-style: solid;border-radius: 0.5em;">
-				<legend>Material:</legend>
-				<button style="" id='authorize_button' onclick="handleAuthClick()" name="wireframe"><label
-						for="authorize_button"> authorize</label>></button>
 
-				<input onclick="handleCheckbox(this)" id="material-shiny" type="checkbox" name="shiny" checked><label
-					for="material-shiny"> Shiny</label>
-			</fieldset>
-			<fieldset style="border-radius: 1em;">
-				<legend>Size:</legend>
-				<input oninput="handleRange(this)" type="range" min="0.1" max="2" value="1" step="0.01" id="myRange"
-					style="background-color: transparent;">
-			</fieldset>
+			<button onclick="deleteSky()" style="display: block;">Delete Skies</button>
+
+			<button onclick="handleAuthClick()" style="display: block;">Add photos via google drive </button>
+			<label for="language">image processing mode</label>
+			<select name="Image-Processing" id="Image-Processing-Options">
+				<option value="javascript">MONOSCOPIC</option>
+				<option value="python">STEREOSCOPIC L/R</option>
+				<option value="python">STEREOSCOPIC R/L</option>
+				<option value="python">STEREOSCOPIC L|R</option>
+				<option value="python">STEREOSCOPIC R|L</option>
+				<option value="python">AUTO</option>
+		  </select>
+
+			<button onclick="spawnIcons()" style="display: block;">spawn icon widgets</button>
+
+
+
 			<button onclick="AFRAME.scenes[0].exitVR()" style="display: block;">Exit Immersive</button>
-		</section>
+
+
 	</div>
 
 
 
 	<script>
-		let meshParent = document.getElementById("meshParent")
-		let mesh = document.getElementById("htmlMesh");
+		const meshParent = document.getElementById("meshParent")
+		const mesh = document.getElementById("htmlMesh");
+		
+		let index = 0
 
 		function addMesh() {
 
@@ -129,25 +200,33 @@
 
 		}
 
-		function handleRadio(detail) {
-			const color = detail.value;
-			knot.setAttribute('material', 'color', color);
+		function moveLeft() {
+			index++
+			select(index)
 		}
-		function handleRange(detail) {
-			const size = detail.value;
-			knot.object3D.scale.setScalar(size);
-		}
-		function handleCheckbox(detail) {
-			const name = detail.name;
-			if (name === 'wireframe') knot.setAttribute('material', 'wireframe', detail.checked);
-			if (name === 'shiny') knot.setAttribute('material', 'reflectivity', detail.checked ? '0.3' : 0);
+
+
+
+		function spawnIcons() {
+			let ICons = document.getElementById('Icons')
+		
+			for (let i = 0; i < arr.length; i++) {
+				let button = document.createElement("img")
+				button.innerHTML = `selectImage${i}`
+				button.setAttribute("src", thumbnails[i])
+				button.setAttribute("onclick", `select(${i})`)
+				button.setAttribute("style", "display: block; background-position: center center; height: 100; width: 200;")
+				Icons.append(button)
+			}
 		}
 	</script>
+
 
 	<script>
 		//this script processes the images as they come in from gdrive
 		let i = 0;
 		let arr = [];
+		let thumbnails = [];
 
 		const scene = document.querySelector("a-scene")
 		const assets = document.querySelector("a-assets")
@@ -156,10 +235,18 @@
 
 			let img = document.createElement("img")
 			img.setAttribute("src", src)
+			// assets.appendChild(img)
+			// thumbnails.push(img)
 			img.onload = function () {
+
 
 				var tempCanvas = document.createElement("canvas")
 				var tCtx = tempCanvas.getContext("2d");
+				tempCanvas.width = img.width
+				tempCanvas.height = img.height
+				tCtx.drawImage(img, 0, 0);
+				var fullImg = tempCanvas.toDataURL("image/png");
+				thumbnails.push(fullImg)
 				tempCanvas.width = img.width;
 				tempCanvas.height = img.height / 2;
 
@@ -194,6 +281,9 @@
 				parent.append(leftSky)
 				scene.append(parent)
 				arr.push(parent)
+				// spawnIcon()
+
+				//
 
 			};
 
@@ -204,29 +294,54 @@
 	</script>
 
 
-<script id="skyPicker">
+	<script id="skyPicker" defer>
 
-	function select(index) {
-	  arr[i].setAttribute("visible", false)
-	  arr[index].setAttribute("visible", true)
-	  i = index;
-  
-	}
-  
 
-	// function setscene() {
-	//   numOfElements = arr.length
-  
-	// }
-  
-	// async function go() {
-	//   for (let child of assets.children) {
-  
-	//   }
-  
-	// }
-  
-  </script>
+		// Skull on Apple iOS 16.4
+		function deleteSky() {
+
+
+			console.log("removed ski")
+			let sky = document.querySelector("a-sky")
+			sky.parentNode.removeChild(sky)
+		}
+
+
+
+		function select(index) {
+			arr[i].setAttribute("visible", false)
+			arr[index].setAttribute("visible", true)
+			i = index;
+
+		}
+
+
+		$(function () { $("#my-interface").draggable(); });
+
+
+
+
+// function setscene() {
+//   numOfElements = arr.length
+
+// }
+
+// async function go() {
+//   for (let child of assets.children) {
+
+//   }
+
+// }
+
+	</script>
+
+
 </body>
 
 </html>
+
+<script>
+	$(function () {
+		$("#dom-overlay ").draggable();
+	});
+</script>

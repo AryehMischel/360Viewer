@@ -11,7 +11,7 @@ let tokenClient;
 let accessToken = null;
 let pickerInited = false;
 let gisInited = false;
-
+let photoIndex = 0
 
 // document.getElementById('authorize_button').style.visibility = 'hidden';
 // document.getElementById('signout_button').style.visibility = 'hidden';
@@ -64,6 +64,7 @@ function maybeEnableButtons() {
  *  Sign in the user upon button click. <-- I SHOULD BE ABLE TO SKIP THIS STEP BY PROVIDING THE ACCESS TOKEN GENERATED EARLIER
  */
 function handleAuthClick() {
+    photoIndex = 0
     tokenClient.callback = async (response) => {
         if (response.error !== undefined) {
             throw (response);
@@ -102,17 +103,23 @@ function handleSignoutClick() {
  */
 function createPicker() {
 
-    var docsView = new google.picker.DocsView()
+        var docsView = new google.picker.DocsView()
+        // .addView(google.picker.ViewId.DOCS)
         .setIncludeFolders(true)
-        .setMimeTypes('application/vnd.google-apps.folder')
         .setSelectFolderEnabled(true);
+        docsView.setMimeTypes("image/png,image/jpeg,image/jpg");
+       
+       var DisplayView = new google.picker.DocsView().setIncludeFolders(true).setSelectFolderEnabled(true);-jkil,ko
 
-
-    var picker = new google.picker.PickerBuilder()
+        var picker = new google.picker.PickerBuilder()
         .setDeveloperKey(API_KEY)
+     
         .setAppId(APP_ID)
         .setOAuthToken(accessToken)
-        .addView(docsView)
+
+        
+
+        .addView(DisplayView)
         .setCallback(pickerCallback)
         .build();
 
@@ -170,6 +177,8 @@ async function fetchImage(fileID){
         .then(blob =>{
             const reader = new FileReader() ;
             reader.onload = function(){
+                console.log(`added photo${photoIndex}`)
+                photoIndex++;
                 addImage(this.result)
             } ; // <--- `this.result` contains a base64 data URI
             return reader.readAsDataURL(blob) ;
