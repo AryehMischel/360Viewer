@@ -109,7 +109,7 @@ function createPicker() {
         .setSelectFolderEnabled(true);
         docsView.setMimeTypes("image/png,image/jpeg,image/jpg");
        
-       var DisplayView = new google.picker.DocsView().setIncludeFolders(true).setSelectFolderEnabled(true);-jkil,ko
+       var DisplayView = new google.picker.DocsView().setIncludeFolders(true).setSelectFolderEnabled(true);
 
         var picker = new google.picker.PickerBuilder()
         .setDeveloperKey(API_KEY)
