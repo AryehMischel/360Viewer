@@ -157,17 +157,15 @@ async function listFiles(folderId) {
         return;
     }
     const files = response.result.files;
+    let filesloaded = 0
     if (!files || files.length == 0) {
         document.getElementById('content').innerText = 'No files found.';
         return;
     }
 
-
-    for(i in files.length){
-        console.log(`${i} out of ${files.length} photos loaded`)
-    }
+    
     files.forEach(
-        file => fetchImage(file.id), console.log(fild.id)
+        file => fetchImage(file.id), console.log(`Loaded: ${filesloaded}/${files.length}`)
         
         );
 
