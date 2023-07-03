@@ -135,7 +135,7 @@ async function pickerCallback(data) {
       
         const document = data[google.picker.Response.DOCUMENTS][0]; //selected folder
         console.log(document.id)
-        await listFiles(document.id);
+        await listFiles(document.id).then(()=>console.log("everybody dance now"))  ;
 
         
     }
@@ -162,7 +162,10 @@ async function listFiles(folderId) {
         return;
     }
 
-    files.forEach(file => fetchImage(file.id));
+    files.forEach(
+        file => fetchImage(file.id), console.log(fild.id)
+        
+        );
 
 }
 
