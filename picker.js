@@ -162,6 +162,10 @@ async function listFiles(folderId) {
         return;
     }
 
+
+    for(i in files.length){
+        console.log(`${i} out of ${files.length} photos loaded`)
+    }
     files.forEach(
         file => fetchImage(file.id), console.log(fild.id)
         
