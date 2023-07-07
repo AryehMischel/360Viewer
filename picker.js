@@ -167,9 +167,16 @@ async function listFiles(folderId) {
 
 
    
-    getImage(files)
+    getImage(files).then(successCallback, failureCallback);
 
-    
+    function successCallback(){
+        console.log("success")
+        }
+          
+          function failureCallback(){
+        console.log("failed")
+        }
+        
        
 
 }
