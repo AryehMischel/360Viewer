@@ -243,13 +243,14 @@
 
 				var tempCanvas = document.createElement("canvas")
 				var tCtx = tempCanvas.getContext("2d");
-				tempCanvas.width = img.width
-				tempCanvas.height = img.height
+				tempCanvas.width = 200;
+				tempCanvas.height = 200;
 				// tCtx.drawImage(img, 0, 0);
 				tCtx.drawImage(img, 30, 10, 200, 150);
-				var fullImg = tempCanvas.toDataURL("image/png");
-				
-				thumbnails.push(fullImg)
+				var thumbnal = tempCanvas.toDataURL("image/png");
+				thumbnails.push(thumbnal)
+				tempCanvas.width = img.width
+				tempCanvas.height = img.height
 				tempCanvas.width = img.width;
 				tempCanvas.height = img.height / 2;
 
