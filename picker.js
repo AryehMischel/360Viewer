@@ -163,13 +163,17 @@ async function listFiles(folderId) {
         return;
     }
 
-    
+    var promise = new Promise(
     files.forEach(
         file => fetchImage(file.id), console.log(`Loaded: ${filesloaded}/${files.length}`)
         
         )
+    )
 
-        console.log("finished")
+    const promise2 = promise.then(console.log("completed"), console.log("failed"));
+
+    
+       
 
 }
 
