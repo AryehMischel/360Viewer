@@ -159,8 +159,7 @@ async function listFiles(folderId) {
 
 
     const files = response.result.files;
-    let filesloaded = 0
-    
+ 
     if (!files || files.length == 0) {
         document.getElementById('content').innerText = 'No files found.';
         return;
@@ -177,6 +176,7 @@ async function listFiles(folderId) {
 
 
 async function getImage(files){
+    let filesloaded = 0
     files.forEach(
         file => fetchImage(file.id), console.log(`Loaded: ${filesloaded}/${files.length}`)
         
