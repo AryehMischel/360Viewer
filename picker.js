@@ -156,26 +156,34 @@ async function listFiles(folderId) {
         document.getElementById('content').innerText = err.message;
         return;
     }
+
+
     const files = response.result.files;
     let filesloaded = 0
+    
     if (!files || files.length == 0) {
         document.getElementById('content').innerText = 'No files found.';
         return;
     }
 
-    var promise = new Promise(
-    files.forEach(
-        file => fetchImage(file.id), console.log(`Loaded: ${filesloaded}/${files.length}`)
-        
-        )
-    )
 
-    const promise2 = promise.then(console.log("completed"), console.log("failed"));
+   
+    getImage(files)
 
     
        
 
 }
+
+
+async function getImage(files){
+    files.forEach(
+        file => fetchImage(file.id), console.log(`Loaded: ${filesloaded}/${files.length}`)
+        
+        )
+}
+
+
 
 
 
