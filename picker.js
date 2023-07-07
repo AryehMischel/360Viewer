@@ -167,7 +167,9 @@ async function listFiles(folderId) {
     files.forEach(
         file => fetchImage(file.id), console.log(`Loaded: ${filesloaded}/${files.length}`)
         
-        );
+        ).then(  console.log("finished2"));
+
+        console.log("finished")
 
 }
 
