@@ -11,55 +11,7 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 	<meta name="description" content="Basic Example — AFrame HTML" />
-
-	<style>
-		/* Force scrollbars onto browser window */
-		body {
-			margin-bottom: 200%;
-		}
-
-		/* Box styles */
-		.myBox {
-			border: none;
-			padding: 5px;
-			font: 24px/36px sans-serif;
-			width: 200px;
-			height: 200px;
-			overflow: scroll;
-		}
-
-		/* Scrollbar styles */
-		::-webkit-scrollbar {
-			width: 12px;
-			height: 12px;
-		}
-
-		::-webkit-scrollbar-track {
-			background: gold;
-			border-radius: 10px;
-		}
-
-		::-webkit-scrollbar-thumb {
-			border-radius: 10px;
-			background: yellowgreen;
-		}
-
-		::-webkit-scrollbar-thumb:hover {
-			background: #88ba1c;
-		}
-
-		.pseudo-item {
-			height: 300px;
-			width: 369px;
-			margin-right: 59px;
-			flex-shrink: 0;
-			background-color: gray;
-		}
-
-		.pseudo-item:nth-of-type(2n) {
-			background-color: lightgray;
-		}
-	</style>
+	<link rel="stylesheet" href="style.css" />
 	<script src="aframe-master.js"></script>
 	<script src="./picker.js"></script>
 	<script src="./stereo-components.js"></script>
@@ -67,8 +19,7 @@
 	<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/handy-controls.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/magnet-helpers.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
 	<script src="build/aframe-html.js"></script>
 </head>
 
@@ -348,4 +299,20 @@
 	$(function () {
 		$("#dom-overlay ").draggable();
 	});
+</script>
+
+<script>
+const worker = new Worker("worker.js");
+
+//   on message from worker
+worker.onmessage = async function (e) {
+  console.log("message from worker")
+};
+
+onmessage = async (evt) => {
+
+	
+}
+
+
 </script>
