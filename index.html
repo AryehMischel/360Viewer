@@ -19,7 +19,8 @@
 	<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/handy-controls.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/magnet-helpers.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
 	<script src="build/aframe-html.js"></script>
 </head>
 
@@ -30,7 +31,8 @@
 		shadow="type: pcfsoft; autoUpdate: true" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;"
 		fog="false">
 		<a-assets>
-			<a-mixin id="blink" blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
+			<a-mixin id="blink"
+				blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
 			<img id="burgerImg" src="./assets/imgs/burger.jpg">
 		</a-assets>
 
@@ -104,8 +106,9 @@
 			<div class="myBox" id="Icons"></div>
 
 
-			<button onclick="deleteSky()" style="display: block;">Delete Skies</button>
+			<input class="input" id="localImageInput" type="file" multiple accept="image/jpeg, image/png, image/jpg" />
 
+			<button onclick="deleteSky()" style="display: block;">Delete Skies</button>
 			<button onclick="handleAuthClick()" style="display: block;">Add photos via google drive </button>
 			<label for="language">image processing mode</label>
 			<select name="Image-Processing" id="Image-Processing-Options">
@@ -115,7 +118,7 @@
 				<option value="python">STEREOSCOPIC L|R</option>
 				<option value="python">STEREOSCOPIC R|L</option>
 				<option value="python">AUTO</option>
-		  </select>
+			</select>
 
 			<button onclick="spawnIcons()" style="display: block;">spawn icon widgets</button>
 
@@ -127,11 +130,45 @@
 	</div>
 
 
+	<!-- ui input -->
+	<script>
+		const input = document.getElementById('localImageInput')
+		var imageURLS = [];
+
+
+		input.onchange = () => { getFiles() }
+
+
+		function getFiles() {
+			const files = input.files;
+			for (let i = 0; i < files.length; i++) {
+				let url = URL.createObjectURL(files[i]);
+				imageURLS.push(url);
+			}
+
+			sendImagesToWorkerForProcessing();
+		}
+
+		
+		function sendImagesToWorkerForProcessing() {
+
+
+			// send work to worker
+			worker.postMessage(
+				{ imageURLS: imageURLS, work: "crop-resize" }
+
+			);
+		}
+
+
+	</script>
+
+
 
 	<script>
 		const meshParent = document.getElementById("meshParent")
 		const mesh = document.getElementById("htmlMesh");
-		
+
 		let index = 0
 
 		function addMesh() {
@@ -161,7 +198,7 @@
 		function spawnIcons() {
 			console.log("spawning icons...")
 			let ICons = document.getElementById('Icons')
-		
+
 			for (let i = 0; i < arr.length; i++) {
 				let button = document.createElement("img")
 				button.innerHTML = `selectImage${i}`
@@ -184,6 +221,9 @@
 		const assets = document.querySelector("a-assets")
 
 		function crop(src) {
+
+
+
 
 			let img = document.createElement("img")
 			img.setAttribute("src", src)
@@ -302,17 +342,30 @@
 </script>
 
 <script>
-const worker = new Worker("worker.js");
+	const worker = new Worker("worker.js");
+	const offscreen = canvas.transferControlToOffscreen();
 
-//   on message from worker
-worker.onmessage = async function (e) {
-  console.log("message from worker")
-};
-
-onmessage = async (evt) => {
+	worker.postMessage(
+		{ canvas: offscreen, work: "init" },
+		[offscreen])
 
 
-}
+	//   on message from worker
+	worker.onmessage = async function (e) {
+		console.log("message from worker")
+	};
+
+	onmessage = async (evt) => {
+
+
+	}
+
+
+	// worker.postMessage(
+    //   { canvas: offscreen, work: "init" },
+    //   [offscreen])
+
+
 
 
 </script>
