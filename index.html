@@ -149,7 +149,7 @@
 			sendImagesToWorkerForProcessing();
 		}
 
-		
+
 		function sendImagesToWorkerForProcessing() {
 
 
@@ -343,6 +343,11 @@
 
 <script>
 	const worker = new Worker("worker.js");
+
+	const canvas = document.createElement("canvas");
+	canvas.height = 2024;
+	canvas.width = 2024;
+
 	const offscreen = canvas.transferControlToOffscreen();
 
 	worker.postMessage(
@@ -355,10 +360,7 @@
 		console.log("message from worker")
 	};
 
-	onmessage = async (evt) => {
 
-
-	}
 
 
 	// worker.postMessage(
