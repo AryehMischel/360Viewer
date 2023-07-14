@@ -107,6 +107,10 @@
 
 
 			<input class="input" id="localImageInput" type="file" multiple accept="image/jpeg, image/png, image/jpg" />
+			<input id="canvasSizeInput" type="number" max="8096" />
+			<label>Compression scalar:</label>
+			<input id="compressionScalarInput" type="number">
+
 
 			<button onclick="deleteSky()" style="display: block;">Delete Skies</button>
 			<button onclick="handleAuthClick()" style="display: block;">Add photos via google drive </button>
@@ -133,10 +137,26 @@
 	<!-- ui input -->
 	<script>
 		const input = document.getElementById('localImageInput')
+		const canvasInputSize = document.getElementById('canvasSizeInput')
+		const compressionScalarInput = document.getElementById('compressionScalarInput')
+
 		var imageURLS = [];
 
 
 		input.onchange = () => { getFiles() }
+
+		compressionScalarInput.onchange = () => {
+			compressionScalar = compressionScalarInput.value
+		}
+
+		canvasInputSize.onchange = () => {
+			worker.postMessage(
+				{ canvasHeight: canvasInputSize.value, work: "resize" }
+
+			);
+
+		}
+
 
 
 		function getFiles() {
@@ -156,7 +176,7 @@
 
 			// send work to worker
 			worker.postMessage(
-				{ imageURLS: imageURLS, work: "crop-resize" }
+				{ imageURLS: imageURLS, work: "crop-resize-stereo" }
 
 			);
 
@@ -368,36 +388,36 @@
 
 
 	function saveImage() {
-    canvas.toBlob(
-      (blob) => {
-        const fr = new FileReader();
-        fr.readAsDataURL(blob);
-        fr.addEventListener("load", () => {
-          const dataURL = fr.result;
-          console.log(dataURL);
-          var compressedImage = new Image();
-          compressedImage.src = dataURL;
+		canvas.toBlob(
+			(blob) => {
+				const fr = new FileReader();
+				fr.readAsDataURL(blob);
+				fr.addEventListener("load", () => {
+					const dataURL = fr.result;
+					console.log(dataURL);
+					var compressedImage = new Image();
+					compressedImage.src = dataURL;
 
-          compressedImage.onload = () => {
-            let leftSky = document.createElement("a-sky");
-            leftSky.setAttribute("src", dataURL);
-            leftSky.setAttribute("visible", "false");
-            setVisibleInSeconds(leftSky, 1);
-            scene.append(leftSky);
-          };
-        });
-        console.log(`blob size ${blob.size}`);
-      },
-      "image/webp",
-      compressionScalar
-    );
-  }
+					compressedImage.onload = () => {
+						let leftSky = document.createElement("a-sky");
+						leftSky.setAttribute("src", dataURL);
+						leftSky.setAttribute("visible", "false");
+						setVisibleInSeconds(leftSky, 1);
+						scene.append(leftSky);
+					};
+				});
+				console.log(`blob size ${blob.size}`);
+			},
+			"image/webp",
+			compressionScalar
+		);
+	}
 
 
-  async function setVisibleInSeconds(object, seconds) {
-    await delay(2000 * seconds);
-    object.setAttribute("visible", "true");
-  }
+	async function setVisibleInSeconds(object, seconds) {
+		await delay(2000 * seconds);
+		object.setAttribute("visible", "true");
+	}
 
 
 	// worker.postMessage(

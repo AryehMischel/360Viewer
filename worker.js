@@ -18,6 +18,8 @@ onmessage = async (evt) => {
             for(let i = 0; i < imageURLS.length; i++){
               drawFitToCanvas(canvas, imageURLS[i])
              await delay(1000);
+             break;
+       
           
       }
 
