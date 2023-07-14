@@ -147,6 +147,7 @@
 			}
 
 			sendImagesToWorkerForProcessing();
+
 		}
 
 
@@ -158,6 +159,8 @@
 				{ imageURLS: imageURLS, work: "crop-resize" }
 
 			);
+
+			imageURLS = []
 		}
 
 
@@ -343,6 +346,7 @@
 
 <script>
 	const worker = new Worker("worker.js");
+	let compressionScalar = 0.5;
 
 	const canvas = document.createElement("canvas");
 	canvas.height = 2024;
@@ -358,9 +362,42 @@
 	//   on message from worker
 	worker.onmessage = async function (e) {
 		console.log("message from worker")
+		saveImage();
+
 	};
 
 
+	function saveImage() {
+    canvas.toBlob(
+      (blob) => {
+        const fr = new FileReader();
+        fr.readAsDataURL(blob);
+        fr.addEventListener("load", () => {
+          const dataURL = fr.result;
+          console.log(dataURL);
+          var compressedImage = new Image();
+          compressedImage.src = dataURL;
+
+          compressedImage.onload = () => {
+            let leftSky = document.createElement("a-sky");
+            leftSky.setAttribute("src", dataURL);
+            leftSky.setAttribute("visible", "false");
+            setVisibleInSeconds(leftSky, 1);
+            scene.append(leftSky);
+          };
+        });
+        console.log(`blob size ${blob.size}`);
+      },
+      "image/webp",
+      compressionScalar
+    );
+  }
+
+
+  async function setVisibleInSeconds(object, seconds) {
+    await delay(2000 * seconds);
+    object.setAttribute("visible", "true");
+  }
 
 
 	// worker.postMessage(
