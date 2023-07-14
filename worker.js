@@ -14,6 +14,7 @@ onmessage = async (evt) => {
           canvas.width =  evt.data.canvasHeight
           break;
         case "crop-resize-stereo":
+                console.log("crop-resize-stereo")
             let imageURLS = evt.data.imageURLS;
             for(let i = 0; i < imageURLS.length; i++){
               drawFitToCanvas(canvas, imageURLS[i])
