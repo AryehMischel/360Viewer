@@ -30,6 +30,15 @@ onmessage = async (evt) => {
 
 }}
 
+
+
+
+
+
+
+
+
+
 async function drawFitToCanvas(canvas, imageUrl){
   
     
