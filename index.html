@@ -14,26 +14,30 @@
 	<link rel="stylesheet" href="styles.css" />
 	<script src="aframe-master.js"></script>
 	<script src="./picker.js"></script>
+	<script src="./aframe.components.js"></script>
 	<script src="./stereo-components.js"></script>
 	<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
 	<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
-	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/handy-controls.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/magnet-helpers.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
+	<!-- <script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/handy-controls.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/magnet-helpers.min.js"></script> -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/aframe-environment-component@1.3.1/dist/aframe-environment-component.min.js"></script>
 	<script src="build/aframe-html.js"></script>
 </head>
 
 <body>
-	<a-scene webxr="overlayElement:#dom-overlay;" reflection="directionalLight:#dirlight;"
-		renderer="alpha:true;physicallyCorrectLights:true;colorManagement:true;exposure:1;toneMapping:ACESFilmic;"
-		gltf-model="dracoDecoderPath: https://cdn.jsdelivr.net/npm/three@0.129.0/examples/js/libs/draco/gltf/;"
+	<!-- gltf-model="dracoDecoderPath: https://cdn.jsdelivr.net/npm/three@0.129.0/examples/js/libs/draco/gltf/;"
 		shadow="type: pcfsoft; autoUpdate: true" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;"
-		fog="false">
+		fog="false" -->
+	<!-- renderer="alpha:true;physicallyCorrectLights:true;colorManagement:true;exposure:1;toneMapping:ACESFilmic;" -->
+	<a-scene  stats webxr="overlayElement:#dom-overlay;" reflection="directionalLight:#dirlight;">
 		<a-assets>
 			<a-mixin id="blink"
 				blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
 			<img id="burgerImg" src="./assets/imgs/burger.jpg">
 		</a-assets>
+
+		<a-sky src="./s.jpg"></a-sky>
 
 		<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat"></a-sphere>
 
@@ -81,19 +85,18 @@
 		</a-entity>
 
 
-		<a-light id="dirlight" shadow-camera-automatic=".navmesh" intensity="0.7"
-			light="castShadow:true;type:directional" position="40 80 0"></a-light>
-		<a-light type="hemisphere" ground-color="orange" color="blue" intensity="0.5"></a-light>
-		<a-circle hide-on-enter-ar shadow="cast:false" class="navmesh" rotation="-90 0 0" radius="6"
-			material="shader:phong;color:paleblue;"></a-circle>
-
-		<a-entity id="env" hide-on-enter-ar position="0 -0.2 0"
-			environment="lighting:none;preset:yavapai;skyType:atmosphere;" onload="removeSky()">
-			<!--  -->
+		<!-- <a-light id="dirlight" shadow-camera-automatic=".navmesh" intensity="0.7"
+			light="castShadow:true;type:directional" position="40 80 0"></a-light> -->
+		<!-- <a-light type="hemisphere" ground-color="orange" color="blue" intensity="0.5"></a-light> -->
+		<!-- <a-circle hide-on-enter-ar shadow="cast:false" class="navmesh" rotation="-90 0 0" radius="6"
+			material="shader:phong;color:paleblue;"></a-circle> -->
+		<!-- 
+		<a-entity id="env" hide-on-enter-ar position="0 -0.2 0" environment="lighting:none;preset:yavapai;;" onload="removeSky()"> -->
 		</a-entity>
 		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.3;"
 			id="knot"></a-torus-knot>
-		<a-entity html="cursor:#cursor;html:#my-interface" shadow position="0.25 1.5 -0.5"></a-entity>
+		<a-entity id="htmlPanel"  shadow position="0.25 1.5 -0.5"></a-entity>
+		<!-- html="cursor:#cursor;html:#my-interface" -->
 	</a-scene>
 
 	<!--HTML-->
@@ -116,12 +119,12 @@
 			<button onclick="handleAuthClick()" style="display: block;">Add photos via google drive </button>
 			<label for="language">image processing mode</label>
 			<select name="Image-Processing" id="Image-Processing-Options">
-				<option value="javascript">MONOSCOPIC</option>
-				<option value="python">STEREOSCOPIC L/R</option>
-				<option value="python">STEREOSCOPIC R/L</option>
-				<option value="python">STEREOSCOPIC L|R</option>
-				<option value="python">STEREOSCOPIC R|L</option>
-				<option value="python">AUTO</option>
+				<option value="mono">MONOSCOPIC</option>
+				<option value="stereo">STEREOSCOPIC L/R</option>
+				<option value="STEREOSCOPIC R/L">STEREOSCOPIC R/L</option>
+				<option value="STEREOSCOPIC L|R">STEREOSCOPIC L|R</option>
+				<option value="STEREOSCOPIC R|L">STEREOSCOPIC R|L</option>
+				<option value="AUTO">AUTO</option>
 			</select>
 
 			<button onclick="spawnIcons()" style="display: block;">spawn icon widgets</button>
@@ -134,61 +137,11 @@
 	</div>
 
 
-	<!-- ui input -->
+	<!-- general controlflow -->
 	<script>
-		const input = document.getElementById('localImageInput')
-		const canvasInputSize = document.getElementById('canvasSizeInput')
-		const compressionScalarInput = document.getElementById('compressionScalarInput')
-
-		var imageURLS = [];
+		const scene = document.querySelector("a-scene")
 
 
-		input.onchange = () => { getFiles() }
-
-		compressionScalarInput.onchange = () => {
-			compressionScalar = compressionScalarInput.value
-		}
-
-		canvasInputSize.onchange = () => {
-			worker.postMessage(
-				{ canvasHeight: canvasInputSize.value, work: "resize" }
-
-			);
-
-		}
-
-
-
-		function getFiles() {
-			const files = input.files;
-			for (let i = 0; i < files.length; i++) {
-				let url = URL.createObjectURL(files[i]);
-				imageURLS.push(url);
-			}
-
-			sendImagesToWorkerForProcessing();
-
-		}
-
-
-		function sendImagesToWorkerForProcessing() {
-
-
-			// send work to worker
-			worker.postMessage(
-				{ imageURLS: imageURLS, work: "crop-resize-stereo" }
-
-			);
-
-			imageURLS = []
-		}
-
-
-	</script>
-
-
-
-	<script>
 		const meshParent = document.getElementById("meshParent")
 		const mesh = document.getElementById("htmlMesh");
 
@@ -240,7 +193,6 @@
 		let arr = [];
 		let thumbnails = [];
 
-		const scene = document.querySelector("a-scene")
 		const assets = document.querySelector("a-assets")
 
 		function crop(src) {
@@ -358,6 +310,113 @@
 
 </html>
 
+
+
+
+<!-- ui input -->
+<script>
+	const input = document.getElementById('localImageInput')
+	const canvasInputSize = document.getElementById('canvasSizeInput')
+	const compressionScalarInput = document.getElementById('compressionScalarInput')
+	const imageModeInput = document.getElementById('Image-Processing-Options')
+
+	var imageURLS = [];
+	var generatedSkies = [];
+	let counter = 0;
+	let counter2 = 0;
+	//remove later
+	let inputMode = "mono"
+
+
+	input.onchange = () => { getFiles(), generateSkies() }
+
+	compressionScalarInput.onchange = () => {
+		compressionScalar = compressionScalarInput.value
+	}
+
+	canvasInputSize.onchange = () => {
+		worker.postMessage(
+			{ canvasHeight: canvasInputSize.value, work: "resize-canvas" }
+
+		);
+
+	}
+
+	imageModeInput.onchange = () => {
+		console.log(imageModeInput.value)
+		inputMode = imageModeInput.value;
+
+	}
+
+
+	function generateSkies() {
+		const files = input.files;
+
+		if (inputMode == "stereo") {
+			for (let i = 0; i < files.length; i++) {
+				let leftSky = document.createElement("a-sky");
+				let rightSky = document.createElement("a-sky");
+				let skyParent = document.createElement("a-entity");
+				skyParent.append(leftSky)
+				skyParent.append(rightSky)
+				scene.append(skyParent)
+				generatedSkies[counter] = leftSky
+				counter++
+				generatedSkies[counter] = rightSky
+				counter++
+
+
+			}
+
+
+
+		} if (inputMode == "mono") {
+
+			for (let i = 0; i < files.length; i++) {
+				let sky = document.createElement("a-sky");
+
+				let skyParent = document.createElement("a-entity");
+				skyParent.append(sky)
+				scene.append(skyParent)
+				generatedSkies[counter] = sky
+				counter++
+
+
+			}
+
+		}
+
+	}
+
+
+	function getFiles() {
+		input.setAttribute("disabled", "true")
+		const files = input.files;
+		for (let i = 0; i < files.length; i++) {
+			let url = URL.createObjectURL(files[i]);
+			imageURLS.push(url);
+		}
+
+		sendImagesToWorkerForProcessing();
+
+	}
+
+
+	function sendImagesToWorkerForProcessing() {
+
+
+		// send work to worker
+		worker.postMessage(
+			{ imageURLS: imageURLS, work: inputMode }
+
+		);
+
+		// imageURLS = []
+	}
+
+
+</script>
+
 <script>
 	$(function () {
 		$("#dom-overlay ").draggable();
@@ -370,8 +429,8 @@
 	let compressionScalar = 0.5;
 
 	const canvas = document.createElement("canvas");
-	canvas.height = 2024;
-	canvas.width = 2024;
+	canvas.height = 1024;
+	canvas.width = 2048;
 
 	const offscreen = canvas.transferControlToOffscreen();
 
@@ -383,6 +442,9 @@
 	//   on message from worker
 	worker.onmessage = async function (e) {
 		console.log("message from worker")
+		console.log(e.data.work)
+
+
 		saveImage();
 
 	};
@@ -400,11 +462,12 @@
 					compressedImage.src = dataURL;
 
 					compressedImage.onload = () => {
-						let leftSky = document.createElement("a-sky");
-						leftSky.setAttribute("src", dataURL);
-						leftSky.setAttribute("visible", "false");
-						setVisibleInSeconds(leftSky, 1);
-						scene.append(leftSky);
+						// let leftSky = document.createElement("a-sky");
+						generatedSkies[counter2].setAttribute("src", dataURL);
+						counter2++
+						// leftSky.setAttribute("visible", "false");
+						// setVisibleInSeconds(leftSky, 1);
+						// scene.append(leftSky);
 					};
 				});
 				console.log(`blob size ${blob.size}`);
