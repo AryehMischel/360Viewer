@@ -442,17 +442,17 @@
 	//   on message from worker
 	worker.onmessage = async function (e) {
 		console.log("message from worker")
-		console.log(e.data.work)
+		console.log()
 
 
-		saveImage();
+		saveImage(e.data.blob);
 
 	};
 
 
-	function saveImage() {
-		canvas.toBlob(
-			(blob) => {
+	function saveImage(blob) {
+		// canvas.toBlob(
+		// 	(blob) => {
 				const fr = new FileReader();
 				fr.readAsDataURL(blob);
 				fr.addEventListener("load", () => {
@@ -471,10 +471,10 @@
 					};
 				});
 				console.log(`blob size ${blob.size}`);
-			},
-			"image/webp",
-			compressionScalar
-		);
+			// },
+			// "image/webp",
+			// compressionScalar
+		// );
 	}
 
 
