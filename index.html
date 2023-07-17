@@ -30,7 +30,7 @@
 		shadow="type: pcfsoft; autoUpdate: true" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;"
 		fog="false" -->
 	<!-- renderer="alpha:true;physicallyCorrectLights:true;colorManagement:true;exposure:1;toneMapping:ACESFilmic;" -->
-	<a-scene  stats webxr="overlayElement:#dom-overlay;" reflection="directionalLight:#dirlight;">
+	<a-scene stats webxr="overlayElement:#dom-overlay;" reflection="directionalLight:#dirlight;">
 		<a-assets>
 			<a-mixin id="blink"
 				blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
@@ -95,7 +95,7 @@
 		</a-entity>
 		<a-torus-knot position="0 1.5 -1" radius="0.1" radius-tubular="0.02" material="shader:phong;reflectivity:0.3;"
 			id="knot"></a-torus-knot>
-		<a-entity id="htmlPanel"  shadow position="0.25 1.5 -0.5"></a-entity>
+		<a-entity id="htmlPanel" shadow position="0.25 1.5 -0.5"></a-entity>
 		<!-- html="cursor:#cursor;html:#my-interface" -->
 	</a-scene>
 
@@ -321,14 +321,19 @@
 	const imageModeInput = document.getElementById('Image-Processing-Options')
 
 	var imageURLS = [];
+	var imageSizes = [];
 	var generatedSkies = [];
+	var generatedMeshes = [];
+
+
 	let counter = 0;
-	let counter2 = 0;
 	//remove later
 	let inputMode = "mono"
 
 
-	input.onchange = () => { getFiles(), generateSkies() }
+
+
+	input.onchange = () => { getFiles(), generateSkies(inputMode) }
 
 	compressionScalarInput.onchange = () => {
 		compressionScalar = compressionScalarInput.value
@@ -347,44 +352,86 @@
 		inputMode = imageModeInput.value;
 
 	}
+//geometry = "phiLength: x"   x =  360 / subdivisions
+      //sky[i].rotation = "-180, i * x, 180"
+      
 
-
-	function generateSkies() {
+	//generated spherical skymaps from 360 (equirectangular) images
+	
+	function generateSkies(inputMode) {
 		const files = input.files;
+		generatedMeshes = []
+		for (let i = 0; i < files.length; i++) {
 
-		if (inputMode == "stereo") {
-			for (let i = 0; i < files.length; i++) {
-				let leftSky = document.createElement("a-sky");
-				let rightSky = document.createElement("a-sky");
-				let skyParent = document.createElement("a-entity");
-				skyParent.append(leftSky)
-				skyParent.append(rightSky)
-				scene.append(skyParent)
-				generatedSkies[counter] = leftSky
-				counter++
-				generatedSkies[counter] = rightSky
-				counter++
+			let lineSegments = 4//line segments can be calculated on a per image bases and respond to performance needs
 
-
-			}
-
-
-
-		} if (inputMode == "mono") {
-
-			for (let i = 0; i < files.length; i++) {
-				let sky = document.createElement("a-sky");
-
-				let skyParent = document.createElement("a-entity");
+			//slice up skies
+			for (let i = 1; i <= lineSegments; i++) {
+				let phi = i * (360 / lineSegments)
+				let sky = document.createElement("a-sky")
+				sky.setAttribute("geometry", `phiLength; ${phi}`)
+				sky.setAttribute("rotation", `-180, ${phi}, 180`)
 				skyParent.append(sky)
-				scene.append(skyParent)
-				generatedSkies[counter] = sky
-				counter++
-
-
+			
 			}
+
+
+
+
+			// let skyParent = document.createElement("a-entity");
+			// let sky = document.createElement("a-sky");
+			// skyParent.append(sky)
+			// generatedMeshes.push(sky)
+			// if (inputMode == "stereo") {
+			// 	let LeftSky = document.createElement("a-sky");
+			// 	skyParent.append(LeftSky)
+			// 	generatedMeshes.push(LeftSky)
+
+			// }
+
+			// scene.append(skyParent)
+			// generatedSkies.push(skyParent)
+
+
+
+
+
 
 		}
+
+		// if (inputMode == "stereo") {
+		// 	for (let i = 0; i < files.length; i++) {
+		// 		let leftSky = document.createElement("a-sky");
+		// 		let rightSky = document.createElement("a-sky");
+		// 		let skyParent = document.createElement("a-entity");
+		// 		skyParent.append(leftSky)
+		// 		skyParent.append(rightSky)
+		// 		scene.append(skyParent)
+		// 		generatedSkies[counter] = leftSky
+		// 		counter++
+		// 		generatedSkies[counter] = rightSky
+		// 		counter++
+
+
+		// 	}
+
+
+
+		// } if (inputMode == "mono") {
+
+		// 	for (let i = 0; i < files.length; i++) {
+		// 		let sky = document.createElement("a-sky");
+
+		// 		let skyParent = document.createElement("a-entity");
+		// 		skyParent.append(sky)
+		// 		scene.append(skyParent)
+		// 		generatedSkies[counter] = sky
+		// 		counter++
+
+
+		// 	}
+
+		// }
 
 	}
 
@@ -393,8 +440,10 @@
 		input.setAttribute("disabled", "true")
 		const files = input.files;
 		for (let i = 0; i < files.length; i++) {
+			// console.log(`photo ${i} is ${files[i].size} bytes ` )
 			let url = URL.createObjectURL(files[i]);
 			imageURLS.push(url);
+			imageSizes.push(files[i].size)
 		}
 
 		sendImagesToWorkerForProcessing();
@@ -407,7 +456,7 @@
 
 		// send work to worker
 		worker.postMessage(
-			{ imageURLS: imageURLS, work: inputMode }
+			{ imageURLS: imageURLS, imageSizes, inputMode }
 
 		);
 
@@ -435,14 +484,14 @@
 	const offscreen = canvas.transferControlToOffscreen();
 
 	worker.postMessage(
-		{ canvas: offscreen, work: "init" },
+		{ canvas: offscreen, inputMode: "init" },
 		[offscreen])
 
 
 	//   on message from worker
 	worker.onmessage = async function (e) {
 		console.log("message from worker")
-		console.log()
+		console.log(e.data.blob)
 
 
 		saveImage(e.data.blob);
@@ -453,27 +502,27 @@
 	function saveImage(blob) {
 		// canvas.toBlob(
 		// 	(blob) => {
-				const fr = new FileReader();
-				fr.readAsDataURL(blob);
-				fr.addEventListener("load", () => {
-					const dataURL = fr.result;
-					console.log(dataURL);
-					var compressedImage = new Image();
-					compressedImage.src = dataURL;
+		const fr = new FileReader();
+		fr.readAsDataURL(blob);
+		fr.addEventListener("load", () => {
+			const dataURL = fr.result;
+			console.log(dataURL);
+			var compressedImage = new Image();
+			compressedImage.src = dataURL;
 
-					compressedImage.onload = () => {
-						// let leftSky = document.createElement("a-sky");
-						generatedSkies[counter2].setAttribute("src", dataURL);
-						counter2++
-						// leftSky.setAttribute("visible", "false");
-						// setVisibleInSeconds(leftSky, 1);
-						// scene.append(leftSky);
-					};
-				});
-				console.log(`blob size ${blob.size}`);
-			// },
-			// "image/webp",
-			// compressionScalar
+			compressedImage.onload = () => {
+				// let leftSky = document.createElement("a-sky");
+				generatedMeshes[counter].setAttribute("src", dataURL);
+				counter++
+				// leftSky.setAttribute("visible", "false");
+				// setVisibleInSeconds(leftSky, 1);
+				// scene.append(leftSky);
+			};
+		});
+		console.log(`blob size ${blob.size}`);
+		// },
+		// "image/webp",
+		// compressionScalar
 		// );
 	}
 
