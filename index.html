@@ -333,7 +333,7 @@
 
 
 
-	input.onchange = () => { getFiles(), generateSkies(inputMode) }
+	input.onchange = () => { generateSkies(inputMode) }//getFiles(),
 
 	compressionScalarInput.onchange = () => {
 		compressionScalar = compressionScalarInput.value
@@ -352,29 +352,33 @@
 		inputMode = imageModeInput.value;
 
 	}
-//geometry = "phiLength: x"   x =  360 / subdivisions
-      //sky[i].rotation = "-180, i * x, 180"
-      
+	//geometry = "phiLength: x"   x =  360 / subdivisions
+	//sky[i].rotation = "-180, i * x, 180"
+
 
 	//generated spherical skymaps from 360 (equirectangular) images
-	
+
 	function generateSkies(inputMode) {
+		console.log("generating skies")
 		const files = input.files;
 		generatedMeshes = []
 		for (let i = 0; i < files.length; i++) {
 
 			let lineSegments = 4//line segments can be calculated on a per image bases and respond to performance needs
 			let skyParent = document.createElement("a-entity");
+			let phi = (360 / lineSegments)
 
 			//slice up skies
 			for (let i = 1; i <= lineSegments; i++) {
-				let phi = i * (360 / lineSegments)
 				let sky = document.createElement("a-sky")
-				sky.setAttribute("geometry", `phiLength; ${phi}`)
-				sky.setAttribute("rotation", `-180, ${phi}, 180`)
+				sky.setAttribute("geometry", `phiLength: ${phi}`)
+				sky.setAttribute("rotation", `-180, ${phi * i}, 180`)
+				sky.setAttribute("material", `color: #${Math.floor(Math.random() * 16777215).toString(16)}`) //
 				skyParent.append(sky)
-			
+
 			}
+
+			scene.append(skyParent)
 
 
 
