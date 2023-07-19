@@ -69,10 +69,15 @@ onmessage = async (evt) => {
     let Segments = 4
 
 
-    nextStep(canvas, imageURLS, imageSizes, inputMode)
+    // nextStep(canvas, imageURLS, imageSizes, inputMode)
+
+    sliceImages(imageURLS)
 
 
   }
+
+
+
 
   async function stereo(){
 
@@ -98,6 +103,37 @@ onmessage = async (evt) => {
   }
 
 
+  async function sliceImages(imageURLS){
+    let ctx = canvas.getContext("2d");
+    const lineSegments = 4;
+
+    for (let i = 1; i <= imageURLS.length; i++) {
+      const imgblob = await fetch(imageURLS[i])
+        .then(r => r.blob());
+      const img = await createImageBitmap(imgblob)
+
+      canvas.height = img.height 
+      canvas.width = img.width / lineSegments;
+
+      for(let i = 0; i < lineSegments; i++){
+        ctx.drawImage(img, img.width - canvas.width * i, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height )
+
+        canvas.convertToBlob().then((blob) => {
+          postMessage({ blob })
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+        })
+
+      }
+
+
+    }
+
+  }
+  
+  
+  
+  
   async function nextStep(canvas, imageURLS, imageSizes, inputMode){
 
     let ctx = canvas.getContext("2d");

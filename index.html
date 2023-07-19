@@ -333,7 +333,7 @@
 
 
 
-	input.onchange = () => { generateSkies(inputMode) }//getFiles(),
+	input.onchange = () => { getFiles(), generateSkies(inputMode) }//getFiles(),
 
 	compressionScalarInput.onchange = () => {
 		compressionScalar = compressionScalarInput.value
@@ -369,16 +369,19 @@
 			let phi = (360 / lineSegments)
 
 			//slice up skies
-			for (let i = 1; i <= lineSegments; i++) {
+			for (let i = 0; i < lineSegments; i++) {
 				let sky = document.createElement("a-sky")
 				sky.setAttribute("geometry", `phiLength: ${phi}`)
 				sky.setAttribute("rotation", `-180, ${phi * i}, 180`)
-				sky.setAttribute("material", `color: #${Math.floor(Math.random() * 16777215).toString(16)}`) //
+				sky.setAttribute("id", `mesh${i}`)
+				// sky.setAttribute("material", `color: #${Math.floor(Math.random() * 16777215).toString(16)}`) //
+				generatedMeshes.push(sky)
 				skyParent.append(sky)
 
 			}
 
 			scene.append(skyParent)
+			generatedSkies.push(skyParent)
 
 
 
@@ -523,11 +526,13 @@
 				// setVisibleInSeconds(leftSky, 1);
 				// scene.append(leftSky);
 			};
+
+			"image/webp",
+		compressionScalar
 		});
 		console.log(`blob size ${blob.size}`);
 		// },
-		// "image/webp",
-		// compressionScalar
+
 		// );
 	}
 
