@@ -57,24 +57,37 @@ if (typeof AFRAME === "undefined") {
 
 
 
-  AFRAME.registerComponent('setLeft', {
+//   AFRAME.registerComponent('setLeft', {
+//     schema: {},
+//     init: function () {
+
+
+//         // this.el.getObject3D("mesh").layers.set(1);
+
+//     }
+
+//   });
+
+
+  AFRAME.registerComponent('renderr', {
     schema: {},
     init: function () {
-        this.el.getObject3D("mesh").layers.set(1);
         console.log("alive")
+        this.el.getObject3D("mesh").layers.set(2);
+   
+
 
     }
 
   });
 
 
-  AFRAME.registerComponent('setRight', {
-    schema: {},
+  AFRAME.registerComponent('renderl', {
     init: function () {
-        this.el.getObject3D("mesh").layers.set(2);
-        console.log("alive")
+        console.log("sdfjklgnlksjdfglkjshdfgkljshndflgkjhnsdklfjgnskdjlfgnlskdjfnglskjdngflksjdngflskdjfgnlskdjfgnsdklfjgn")
+        this.el.getObject3D("mesh").layers.set(1);
 
-
-    }
+    },
+  
 
   });

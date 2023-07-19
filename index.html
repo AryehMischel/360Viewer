@@ -14,7 +14,7 @@
 	<link rel="stylesheet" href="styles.css" />
 	<script src="aframe-master.js"></script>
 	<script src="./picker.js"></script>
-	<script src="./aframe.components.js"></script>
+	<script src="./aframe-components.js"></script>
 	<script src="./stereocam.js"></script>
 	<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
 	<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
@@ -37,8 +37,7 @@
 			<img id="burgerImg" src="./assets/imgs/burger.jpg">
 		</a-assets>
 
-		<a-sky foo id="sky1" src="./s.jpg"></a-sky>
-		<a-sky id="sky2" color="yellow"></a-sky>
+		<a-sky renderl id="sky1" src="./s.jpg"></a-sky>
 
 
 
@@ -403,12 +402,13 @@
 
 				//slice up skies
 				for (let i = 0; i < lineSegments; i++) {
+					console.log("something...")
 					let sky = document.createElement("a-sky")
-					sky.setAttribute("setLeft", "")
-					sky.onload = ()=>{
-						// sky.getObject3D("mesh").layers.set(1);
-						// console.log("loaded?")
-					}
+					sky.setAttribute("renderl", ``)
+					// sky.onload = ()=>{
+					// 	// sky.getObject3D("mesh").layers.set(1);
+					// 	// console.log("loaded?")
+					// }
 					// sky.getObject3D("mesh").layers.set(1);
 
 					sky.setAttribute("geometry", `phiLength: ${phi}`)
@@ -422,7 +422,7 @@
 
 				for (let i = 0; i < lineSegments; i++) {
 					let sky = document.createElement("a-sky")
-					sky.setAttribute("setRight", "")
+					sky.setAttribute("renderr", "")
 					// sky.getObject3D("mesh").layers.set(2);
 
 					sky.setAttribute("geometry", `phiLength: ${phi}`)
@@ -587,11 +587,11 @@
 
 document.querySelector("a-scene").addEventListener("loaded", ()=>{
         
-		let sky1 = document.getElementById("sky1");
-		let sky2 = document.getElementById("sky2");
+		// let sky1 = document.getElementById("sky1");
+		// let sky2 = document.getElementById("sky2");
 	
-		sky1.getObject3D("mesh").layers.set(1) // layer 1 is left eye, layer 2 is right 
-		sky2.getObject3D("mesh").layers.set(2) 
+		// sky1.getObject3D("mesh").layers.set(1) // layer 1 is left eye, layer 2 is right 
+		// sky2.getObject3D("mesh").layers.set(2) 
 		  
 		})
 </script>
