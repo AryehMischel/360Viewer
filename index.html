@@ -341,7 +341,7 @@
 
 	canvasInputSize.onchange = () => {
 		worker.postMessage(
-			{ canvasHeight: canvasInputSize.value, work: "resize-canvas" }
+			{ canvasHeight: canvasInputSize.value, inputMode: "resize-scaling" }
 
 		);
 
@@ -490,38 +490,40 @@
 	canvas.width = 2048;
 
 	const offscreen = canvas.transferControlToOffscreen();
-
+	let bscounter = 0
 	worker.postMessage(
 		{ canvas: offscreen, inputMode: "init" },
 		[offscreen])
 
 
 	//   on message from worker
-	worker.onmessage = async function (e) {
+	worker.onmessage = function (e) {
 		console.log("message from worker")
 		console.log(e.data.blob)
 
 
-		saveImage(e.data.blob);
+		saveImage(e.data.blob, bscounter);
+		bscounter++;
 
 	};
 
 
-	function saveImage(blob) {
+	function saveImage(blob, bs) {
 		// canvas.toBlob(
 		// 	(blob) => {
+			console.log(bs)
 		const fr = new FileReader();
 		fr.readAsDataURL(blob);
 		fr.addEventListener("load", () => {
 			const dataURL = fr.result;
-			console.log(dataURL);
+			// console.log(dataURL);
 			var compressedImage = new Image();
 			compressedImage.src = dataURL;
 
 			compressedImage.onload = () => {
 				// let leftSky = document.createElement("a-sky");
-				generatedMeshes[counter].setAttribute("src", dataURL);
-				counter++
+				generatedMeshes[bs].setAttribute("src", dataURL);
+				// counter++
 				// leftSky.setAttribute("visible", "false");
 				// setVisibleInSeconds(leftSky, 1);
 				// scene.append(leftSky);

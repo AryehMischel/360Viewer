@@ -1,11 +1,14 @@
 const delay = ms => new Promise(res => setTimeout(res, ms));
 var canvas
+var ScaleWidth = 2048
+var ScaleHeight = 1024
 // let firstMessage = false
 
 const WorkMode = {
   "init": "init",
   "mono": 0,
-  "stereo": 1
+  "stereo": 1,
+  "resize-scaling": 2
   // 0: "mono",
   // 1: "stereo",
   // 2: 2,
@@ -27,8 +30,8 @@ onmessage = async (evt) => {
 
   console.log("worker is messaged",evt.data.inputMode )
   // console.log(WorkMode["mono"])
-    const imageURLS = evt.data.imageURLS;
-    const imageSizes = evt.data.imageSizes;
+    // const imageURLS = evt.data.imageURLS;
+    // const imageSizes = evt.data.imageSizes;
     const inputMode = evt.data.inputMode;
 
 
@@ -36,12 +39,18 @@ onmessage = async (evt) => {
 
     case 0:
       console.log("mono")
-      mono()
+      mono(evt.data.imageURLS)
       break;
     case 1:
       console.log("stereo")
       stereo()
       break;
+    case 2:
+      console.log("resizing canvas...")
+      ScaleHeight = evt.data.canvasHeight
+      ScaleWidth = evt.data.canvasHeight * 2
+      canvas.width = ScaleWidth
+      canvas.height = ScaleHeight
 
 
 
@@ -61,18 +70,18 @@ onmessage = async (evt) => {
     //    
 
 
-  async function mono(){
+  async function mono(imageURLS){
 
     
     // determineLineSegments(); //this code will be done in the main thread
     
-    let Segments = 4
+    let Segments = 8
 
 
     // nextStep(canvas, imageURLS, imageSizes, inputMode)
 
-    sliceImages(imageURLS)
-
+    // sliceImages(imageURLS)
+    resizeSliceImages(imageURLS)
 
   }
 
@@ -107,7 +116,7 @@ onmessage = async (evt) => {
     let ctx = canvas.getContext("2d");
     const lineSegments = 4;
 
-    for (let i = 1; i <= imageURLS.length; i++) {
+    for (let i = 0; i < imageURLS.length; i++) {
       const imgblob = await fetch(imageURLS[i])
         .then(r => r.blob());
       const img = await createImageBitmap(imgblob)
@@ -115,7 +124,7 @@ onmessage = async (evt) => {
       canvas.height = img.height 
       canvas.width = img.width / lineSegments;
 
-      for(let i = 0; i < lineSegments; i++){
+      for(let i = 1; i <= lineSegments; i++){
         ctx.drawImage(img, img.width - canvas.width * i, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height )
 
         canvas.convertToBlob().then((blob) => {
@@ -124,323 +133,62 @@ onmessage = async (evt) => {
     
         })
 
+
       }
 
 
     }
 
   }
-  
-  
-  
-  
-  async function nextStep(canvas, imageURLS, imageSizes, inputMode){
 
+
+  
+  
+  
+  
+  
+  
+  async function resizeSliceImages(imageURLS){
     let ctx = canvas.getContext("2d");
+    const lineSegments = 4;
+    canvas.width =  ScaleWidth / lineSegments
 
     for (let i = 0; i < imageURLS.length; i++) {
       const imgblob = await fetch(imageURLS[i])
         .then(r => r.blob());
       const img = await createImageBitmap(imgblob)
-  
-  
-      // let scaleFactor = Math.max(canvas.width / img.width, canvas.height / img.height);
-      // console.log(scaleFactor)
-  
-      // let newWidth = img.width * scaleFactor;
-      // let newHeight = img.height * scaleFactor;
-  
-      // let x = (canvas.width / 2) - (newWidth / 2);
-      // let y = (canvas.height / 2) - (newHeight / 2);
-  
-      // // console.log(x, y)
-  
-      // // ctx.drawImage(img, x, y, newWidth, newHeight);
-      // ctx.drawImage(img, x, y, canvas.width / 4, canvas.height);
-  
-      // // ctx.drawImage(img, 0, 0);
-  
-      // // await delay(4000);
-      // // self.postMessage("done mono")
-      // // postMessage({blob: canvas.convertToBlob()})
-  
-      canvas.convertToBlob().then((blob) => {
-        postMessage({ blob })
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-      })
+      let imgWidth = img.width;
 
-     
-      if(inputMode == "stereo"){
+      let scaleFactor = Math.max(canvas.width / img.width, canvas.height / img.height);
+      console.log(scaleFactor)
+  
+      let newWidth = img.width * scaleFactor;
+      let newHeight = img.height * scaleFactor;
+  
+      let x = (canvas.width / 2) - (newWidth / 2);
+      let y = (canvas.height / 2) - (newHeight / 2);
 
-        // ctx.drawImage(img, x, y, canvas.width / 3, canvas.height);
-
+   
+      for(let i = 1; i <= lineSegments; i++){
+        ctx.drawImage(img,
+           imgWidth -(i *  imgWidth/lineSegments) , 0,
+           (img.width / lineSegments), img.height,
+            0, 0,
+            newWidth / lineSegments, newHeight)
 
         canvas.convertToBlob().then((blob) => {
           postMessage({ blob })
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
         })
-      
+        
+
       }
-  
+
+
     }
-  }
+
+  }}
+  
   
 
-
-
-
-
-
-
-async function resize2(canvas, imageURLS, imageSizes) {
-  let ctx = canvas.getContext("2d");
-
-  for (let i = 0; i < imageURLS.length; i++) {
-    const imgblob = await fetch(imageURLS[i])
-      .then(r => r.blob());
-    const img = await createImageBitmap(imgblob)
-
-
-    let scaleFactor = Math.max(canvas.width / img.width, canvas.height / img.height);
-    console.log(scaleFactor)
-
-    let newWidth = img.width * scaleFactor;
-    let newHeight = img.height * scaleFactor;
-
-    let x = (canvas.width / 2) - (newWidth / 2);
-    let y = (canvas.height / 2) - (newHeight / 2);
-
-    // console.log(x, y)
-
-    // ctx.drawImage(img, x, y, newWidth, newHeight);
-    ctx.drawImage(img, x, y, canvas.width / 4, canvas.height);
-
-    // ctx.drawImage(img, 0, 0);
-
-    // await delay(4000);
-    // self.postMessage("done mono")
-    // postMessage({blob: canvas.convertToBlob()})
-
-    canvas.convertToBlob().then((blob) => {
-      postMessage({ blob })
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-
-      // optional: add the fillrect to clear the canvas.
-    })
-
-    // await delay(1000);
-
-
-  }
-
-
-
-};
-
-
-
-
-
-
-
-  // all being sliced into segments
-  // all being
-
-
-  // switch (evt.data.work) {
-  //   case "init":
-  //     console.log("initialized offline canvas")
-  //     canvas = evt.data.canvas
-  //     break;
-  //   case "resize-canvas":
-  //     canvas.height = evt.data.canvasHeight / 2
-  //     canvas.width = evt.data.canvasHeight
-  //     break;
-  //   case "stereo":
-  //     console.log("crop-resize-stereo")
-  //     let imageURLS = evt.data.imageURLS;
-  //     CropResizeStereo(canvas, imageURLS)
-  //     break;
-
-  //   case "mono":
-  //     console.log("mono", evt.data.imageSizes)
-  //     resize2(canvas, evt.data.imageURLS, evt.data.imageSizes)
-  //     // resize(canvas, evt.data.imageURLS)
-  //     break;
-
-  //   case "crop-resize-stereo-L|R":
-  //     console.log("crop-resize-stereo")
-  //     break;
-
-  // case "crop-resize-stereo-R|L":
-  //   console.log("crop-resize-stereo")
-  //   break;
-
-
-  // case "crop-resize-stereo-R/L":
-  //   console.log("crop-resize-stereo")
-  //   break;
-
-  // case "fuck":
-  //   console.log("fuck")
-  //   break;
-
-  //   console.log("done")
-  // self.postMessage("right back at you cheif")
-
-  // }
-}
-
-
-
-
-
-
-async function CropResizeStereo(canvas, imageURLS) {
-  let ctx = canvas.getContext("2d");
-
-  for (let i = 0; i < imageURLS.length; i++) {
-
-    const imgblob = await fetch(imageURLS[i])
-      .then(r => r.blob());
-    const img = await createImageBitmap(imgblob)
-
-
-    let scaleFactor = Math.max(canvas.width / img.width, canvas.height / img.height);
-
-    let newWidth = img.width * scaleFactor;
-    let newHeight = img.height * scaleFactor;
-
-
-
-    // console.log("before message")
-    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, newWidth, newHeight);
-    await delay(4000);
-
-    self.postMessage("done with first image")
-    await delay(4000);
-
-    ctx.drawImage(img, 0, img.height / 2, img.width, img.height, 0, 0, newWidth, newHeight);
-    console.log("done with first image")
-
-    await delay(4000);
-    self.postMessage("done with second")
-    await delay(4000);
-  }
-
-}
-
-
-async function resize(canvas, imageURLS) {
-  let ctx = canvas.getContext("2d");
-
-  for (let i = 0; i < imageURLS.length; i++) {
-    const imgblob = await fetch(imageURLS[i])
-      .then(r => r.blob());
-    const img = await createImageBitmap(imgblob)
-
-
-
-    let scaleFactor = Math.max(canvas.width / img.width, canvas.height / img.height);
-    console.log(scaleFactor)
-
-    let newWidth = img.width * scaleFactor;
-    let newHeight = img.height * scaleFactor;
-
-    let x = (canvas.width / 2) - (newWidth / 2);
-    let y = (canvas.height / 2) - (newHeight / 2);
-
-    // ctx.drawImage(img, x, y, newWidth, newHeight);
-    ctx.drawImage(img, x, y, canvas.width, canvas.height);
-
-    // ctx.drawImage(img, 0, 0);
-
-    // await delay(4000);
-
-    // postMessage({blob: canvas.convertToBlob()})
-    await delay(4000);
-    self.postMessage("done mono")
-    // canvas.convertToBlob().then((blob) => {
-    //   postMessage({blob})
-
-    //   // optional: add the fillrect to clear the canvas.
-    // })
-
-    await delay(2000);
-
-  }
-
-
-
-};
-
-
-
-
-
-async function drawFitToCanvas(canvas, imageUrl) {
-
-
-
-  let ctx = canvas.getContext("2d");
-
-  const imgblob = await fetch(imageUrl)
-    .then(r => r.blob());
-  const img = await createImageBitmap(imgblob)
-
-
-  let scaleFactor = Math.max(canvas.width / img.width, canvas.height / img.height);
-
-  let newWidth = img.width * scaleFactor;
-  let newHeight = img.height * scaleFactor;
-
-  ctx.drawImage(img, 0, 0, img.width, img.height / 2, 0, 0, newWidth, newHeight);
-  await delay(4000);
-
-  self.postMessage("done dsd sdf sdf sdf sdf sd")
-  await delay(4000);
-
-  ctx.drawImage(img, 0, img.height / 2, img.width, img.height / 2, 0, 0, newWidth, newHeight);
-  console.log("after message")
-
-  await delay(4000);
-  self.postMessage("done dsd sdf sdf sdf sdf sd")
-
-  // self.postMessage({work: "fuck"})
-  // console.log("after message")
-
-  // await delay(4000);
-  // console.log("after message2 ")
-  // ctx.drawImage(img, 0 , img.height/2, img.width, img.height/2, 0, 0, newWidth, newHeight); 
-  // await delay(3000);
-  // self.postMessage("done dsd sdf sdf sdf sdf sd")
-
-
-
-  // ctx.drawImage(img, 0 , img.height/2, img.width, img.height/2, 0, 0, newWidth, newHeight); 
-
-
-
-
-
-}
-
-
-
-// console.log(img.height == img.width/2)
-// console.log(canvas.height, canvas.width)
-
-// if(img.height == img.width/2 && img.height % 1024 == 0){
-
-//     console.log("good")
-
-
-
-// }else{
-//   console.log("not good")
-// }
-
-// canvas.width = img.width
-// canvas.height = img.height
