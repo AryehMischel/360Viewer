@@ -15,7 +15,7 @@
 	<script src="aframe-master.js"></script>
 	<script src="./picker.js"></script>
 	<script src="./aframe.components.js"></script>
-	<script src="./stereo-components.js"></script>
+	<script src="./stereocam.js"></script>
 	<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
 	<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 	<!-- <script src="https://cdn.jsdelivr.net/npm/handy-work@3.1.9/build/handy-controls.min.js"></script>
@@ -37,7 +37,10 @@
 			<img id="burgerImg" src="./assets/imgs/burger.jpg">
 		</a-assets>
 
-		<a-sky src="./s.jpg"></a-sky>
+		<a-sky foo id="sky1" src="./s.jpg"></a-sky>
+		<a-sky id="sky2" color="yellow"></a-sky>
+
+
 
 		<a-sphere color="black" radius="0.01" id="cursor" material="shader:flat"></a-sphere>
 
@@ -333,7 +336,7 @@
 
 
 
-	input.onchange = () => { getFiles(), generateSkies(inputMode) }//getFiles(),
+	input.onchange = () => { generateSkies(inputMode) }//getFiles(),
 
 	compressionScalarInput.onchange = () => {
 		compressionScalar = compressionScalarInput.value
@@ -362,86 +365,111 @@
 		console.log("generating skies")
 		const files = input.files;
 		generatedMeshes = []
-		for (let i = 0; i < files.length; i++) {
 
-			let lineSegments = 4//line segments can be calculated on a per image bases and respond to performance needs
-			let skyParent = document.createElement("a-entity");
-			let phi = (360 / lineSegments)
 
-			//slice up skies
-			for (let i = 0; i < lineSegments; i++) {
-				let sky = document.createElement("a-sky")
-				sky.setAttribute("geometry", `phiLength: ${phi}`)
-				sky.setAttribute("rotation", `-180, ${phi * i}, 180`)
-				sky.setAttribute("id", `mesh${i}`)
-				// sky.setAttribute("material", `color: #${Math.floor(Math.random() * 16777215).toString(16)}`) //
-				generatedMeshes.push(sky)
-				skyParent.append(sky)
+		if (inputMode == "mono") {
+			for (let i = 0; i < files.length; i++) {
+
+				let lineSegments = 4//line segments can be calculated on a per image bases and respond to performance needs
+				let phi = (360 / lineSegments)
+				let skyParent = document.createElement("a-entity");
+
+				//slice up skies
+				for (let i = 0; i < lineSegments; i++) {
+					let sky = document.createElement("a-sky")
+					sky.setAttribute("geometry", `phiLength: ${phi}`)
+					sky.setAttribute("rotation", `-180, ${phi * i}, 180`)
+					sky.setAttribute("id", `mesh${i}`)
+					// sky.setAttribute("material", `color: #${Math.floor(Math.random() * 16777215).toString(16)}`) //
+					generatedMeshes.push(sky)
+					skyParent.append(sky)
+
+				}
+
+				scene.append(skyParent)
+				generatedSkies.push(skyParent)
+
 
 			}
+		}
 
-			scene.append(skyParent)
-			generatedSkies.push(skyParent)
+		if (inputMode == "stereo") {
+			for (let i = 0; i < files.length; i++) {
+
+				let lineSegments = 4//line segments can be calculated on a per image bases and respond to performance needs
+				let phi = (360 / lineSegments)
+				let skyParent = document.createElement("a-entity");
+				// skyParent.setAttribute("foo", "")
+
+				//slice up skies
+				for (let i = 0; i < lineSegments; i++) {
+					let sky = document.createElement("a-sky")
+					sky.setAttribute("setLeft", "")
+					sky.onload = ()=>{
+						sky.getObject3D("mesh").layers.set(1);
+						console.log("loaded?")
+					}
+					// sky.getObject3D("mesh").layers.set(1);
+
+					sky.setAttribute("geometry", `phiLength: ${phi}`)
+					sky.setAttribute("rotation", `-180, ${phi * i}, 180`)
+					sky.setAttribute("id", `mesh${i}`)
+					sky.setAttribute("material", `color: #${Math.floor(Math.random() * 16777215).toString(16)}`) //
+					generatedMeshes.push(sky)
+					skyParent.append(sky)
+
+				}
+
+				for (let i = 0; i < lineSegments; i++) {
+					let sky = document.createElement("a-sky")
+					sky.setAttribute("setRight", "")
+					// sky.getObject3D("mesh").layers.set(2);
+
+					sky.setAttribute("geometry", `phiLength: ${phi}`)
+					sky.setAttribute("rotation", `-180, ${phi * i}, 180`)
+					sky.setAttribute("id", `mesh${i}`)
+					sky.setAttribute("material", `color: #${Math.floor(Math.random() * 16777215).toString(16)}`) //
+					generatedMeshes.push(sky)
+					skyParent.append(sky)
+
+
+				}
 
 
 
 
-			// let skyParent = document.createElement("a-entity");
-			// let sky = document.createElement("a-sky");
-			// skyParent.append(sky)
-			// generatedMeshes.push(sky)
-			// if (inputMode == "stereo") {
-			// 	let LeftSky = document.createElement("a-sky");
-			// 	skyParent.append(LeftSky)
-			// 	generatedMeshes.push(LeftSky)
+				
 
-			// }
-
-			// scene.append(skyParent)
-			// generatedSkies.push(skyParent)
+				scene.append(skyParent)
+				generatedSkies.push(skyParent)
 
 
+			}
 
 
 
 
 		}
 
-		// if (inputMode == "stereo") {
-		// 	for (let i = 0; i < files.length; i++) {
-		// 		let leftSky = document.createElement("a-sky");
-		// 		let rightSky = document.createElement("a-sky");
-		// 		let skyParent = document.createElement("a-entity");
-		// 		skyParent.append(leftSky)
-		// 		skyParent.append(rightSky)
-		// 		scene.append(skyParent)
-		// 		generatedSkies[counter] = leftSky
-		// 		counter++
-		// 		generatedSkies[counter] = rightSky
-		// 		counter++
-
-
-		// 	}
 
 
 
-		// } if (inputMode == "mono") {
-
-		// 	for (let i = 0; i < files.length; i++) {
-		// 		let sky = document.createElement("a-sky");
-
-		// 		let skyParent = document.createElement("a-entity");
-		// 		skyParent.append(sky)
-		// 		scene.append(skyParent)
-		// 		generatedSkies[counter] = sky
-		// 		counter++
 
 
-		// 	}
 
-		// }
+
 
 	}
+
+
+
+
+
+
+
+
+
+
 
 
 	function getFiles() {
@@ -511,7 +539,7 @@
 	function saveImage(blob, bs) {
 		// canvas.toBlob(
 		// 	(blob) => {
-			console.log(bs)
+		console.log(bs)
 		const fr = new FileReader();
 		fr.readAsDataURL(blob);
 		fr.addEventListener("load", () => {
@@ -530,7 +558,7 @@
 			};
 
 			"image/webp",
-		compressionScalar
+				compressionScalar
 		});
 		console.log(`blob size ${blob.size}`);
 		// },
@@ -552,4 +580,18 @@
 
 
 
+</script>
+
+<script>
+
+
+document.querySelector("a-scene").addEventListener("loaded", ()=>{
+        
+		let sky1 = document.getElementById("sky1");
+		let sky2 = document.getElementById("sky2");
+	
+		sky1.getObject3D("mesh").layers.set(1) // layer 1 is left eye, layer 2 is right 
+		sky2.getObject3D("mesh").layers.set(2) 
+		  
+		})
 </script>
