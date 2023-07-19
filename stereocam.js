@@ -60,8 +60,8 @@ if (typeof AFRAME === "undefined") {
   AFRAME.registerComponent('setLeft', {
     schema: {},
     init: function () {
+        this.el.getObject3D("mesh").layers.set(1);
         console.log("alive")
-
 
     }
 
