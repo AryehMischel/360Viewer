@@ -132,6 +132,8 @@ onmessage = async (evt) => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         })
+			await delay(1000);
+
 
 
       }
