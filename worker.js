@@ -80,8 +80,8 @@ onmessage = async (evt) => {
 
     // nextStep(canvas, imageURLS, imageSizes, inputMode)
 
-    // sliceImages(imageURLS)
-    resizeSliceImages(imageURLS)
+    sliceImages(imageURLS)
+    // resizeSliceImages(imageURLS)
 
   }
 

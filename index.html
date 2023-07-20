@@ -30,7 +30,7 @@
 		shadow="type: pcfsoft; autoUpdate: true" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;"
 		fog="false" -->
 	<!-- renderer="alpha:true;physicallyCorrectLights:true;colorManagement:true;exposure:1;toneMapping:ACESFilmic;" -->
-	<a-scene stats webxr="overlayElement:#dom-overlay;" reflection="directionalLight:#dirlight;">
+	<a-scene webxr="overlayElement:#dom-overlay;" reflection="directionalLight:#dirlight;">
 		<a-assets>
 			<a-mixin id="blink"
 				blink-controls="cameraRig: #cameraRig; teleportOrigin: #head; collisionEntities:.navmesh;"></a-mixin>
@@ -379,6 +379,7 @@
 					sky.setAttribute("geometry", `phiLength: ${phi}`)
 					sky.setAttribute("rotation", `-180, ${phi * i}, 180`)
 					sky.setAttribute("id", `mesh${i}`)
+					sky.setAttribute("visible", `false`)
 					// sky.setAttribute("material", `color: #${Math.floor(Math.random() * 16777215).toString(16)}`) //
 					generatedMeshes.push(sky)
 					skyParent.append(sky)
@@ -459,7 +460,22 @@
 
 
 
+
+
+
 	}
+
+	async function setMeshesVisible(){
+
+		for(i in generatedMeshes){
+			generatedMeshes[i].setAttribute("visible", "true")
+			await delay(100);
+
+		}
+	}
+
+
+
 
 
 
@@ -595,3 +611,11 @@ document.querySelector("a-scene").addEventListener("loaded", ()=>{
 		  
 		})
 </script>
+
+<script>
+	javascript:(function(){var
+	script=document.createElement('script');script.onload=function(){var stats=new
+	Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function
+	loop(){stats.update();requestAnimationFrame(loop)});};script.src='//cdn.jsdelivr.net/gh/Kevnz/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+  
+  </script>
