@@ -114,7 +114,7 @@ onmessage = async (evt) => {
 
   async function sliceImages(imageURLS) {
     let ctx = canvas.getContext("2d");
-    const lineSegments = 4;
+    const lineSegments = 16;
 
     for (let i = 0; i < imageURLS.length; i++) {
       const imgblob = await fetch(imageURLS[i])
@@ -125,7 +125,7 @@ onmessage = async (evt) => {
       canvas.width = img.width / lineSegments;
 
       for (let i = 1; i <= lineSegments; i++) {
-        await delay(3000);
+        await delay(500);
         ctx.drawImage(img, img.width - canvas.width * i, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height)
 
         canvas.convertToBlob().then((blob) => {

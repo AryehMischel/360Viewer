@@ -370,10 +370,10 @@
 		if (inputMode == "mono") {
 			for (let i = 0; i < files.length; i++) {
 
-				let lineSegments = 4//line segments can be calculated on a per image bases and respond to performance needs
+				let lineSegments = 16//line segments can be calculated on a per image bases and respond to performance needs
 				let phi = (360 / lineSegments)
 				let skyParent = document.createElement("a-entity");
-				skyParent.setAttribute('visible', 'false')
+				// skyParent.setAttribute('visible', 'false')
 
 				//slice up skies
 				for (let i = 0; i < lineSegments; i++) {
@@ -381,7 +381,7 @@
 					sky.setAttribute("geometry", `phiLength: ${phi}`)
 					sky.setAttribute("rotation", `-180, ${phi * i}, 180`)
 					sky.setAttribute("id", `mesh${i}`)
-					// sky.setAttribute("visible", `false`)
+					sky.setAttribute("visible", `false`)
 					// sky.setAttribute("material", `color: #${Math.floor(Math.random() * 16777215).toString(16)}`) //
 					generatedMeshes.push(sky)
 					skyParent.append(sky)
@@ -471,18 +471,19 @@
 
 	async function setMeshesVisible() {
 
-		// for (let i = 1; i < generatedMeshes.length; i++) {
-		// 	generatedMeshes[generatedMeshes.length - i].setAttribute("visible", "true")
-		// 	if (i <= 4) {
-		// 		await delay(2000);
-		// 	} else {
-		// 		await delay(100);
-		// 	}
+		for (let i = 0; i < generatedMeshes.length; i++) {
+			generatedMeshes[(generatedMeshes.length - 1) - i ].setAttribute("visible", "true")
+			// if (i <= 4) {
+			// 	await delay(2000);
+			// } else {
+			// 	await delay(100);
+			// }
+			await delay(100);
 
 
-		// }
+		}
 
-		generatedSkies[0].setAttribute('visible', "true")
+		// generatedSkies[0].setAttribute('visible', "true")
 	}
 
 
