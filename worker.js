@@ -75,7 +75,7 @@ onmessage = async (evt) => {
 
     // determineLineSegments(); //this code will be done in the main thread
 
-    let Segments = 8
+    let Segments = 4
 
 
     // nextStep(canvas, imageURLS, imageSizes, inputMode)
@@ -125,14 +125,17 @@ onmessage = async (evt) => {
       canvas.width = img.width / lineSegments;
 
       for (let i = 1; i <= lineSegments; i++) {
+        await delay(3000);
         ctx.drawImage(img, img.width - canvas.width * i, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height)
 
         canvas.convertToBlob().then((blob) => {
           postMessage({ blob })
           ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
 
         })
-			await delay(1000);
+
+			  
 
 
 
