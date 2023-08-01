@@ -30,7 +30,7 @@
 		shadow="type: pcfsoft; autoUpdate: true" cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;"
 		fog="false" -->
 	<!-- renderer="alpha:true;physicallyCorrectLights:true;colorManagement:true;exposure:1;toneMapping:ACESFilmic;" -->
-	<a-scene webxr="overlayElement:#dom-overlay;" 
+	<a-scene stats webxr="overlayElement:#dom-overlay;" 
 	reflection="directionalLight:#dirlight;"
 	cursor="rayOrigin: mouse" raycaster="objects: [html]; interval:100;"
 	>>
@@ -542,7 +542,7 @@
 	})
 </script>
 
-<script>
+<!-- <script>
 	javascript: (function () {
 		var
 			script = document.createElement('script'); script.onload = function () {
